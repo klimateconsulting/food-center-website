@@ -26,7 +26,7 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
 
     // ── Validate reCAPTCHA ──
-    if (RECAPTCHA_SECRET !== '6LeLnK0sAAAAAAcogU9tRCYZ001dKQn1AILGi6j4') {
+    if (RECAPTCHA_SECRET && data.recaptcha_token) {
       var recaptchaResponse = UrlFetchApp.fetch('https://www.google.com/recaptcha/api/siteverify', {
         method: 'post',
         payload: {

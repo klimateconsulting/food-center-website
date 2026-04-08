@@ -1065,7 +1065,7 @@
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
   // ⚠️ REPLACE with your deployed Google Apps Script URL
-  var APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzPNH5PRUmzxQ3s0H71cc_oOS8IwF-dlwYbRWv5bLN0kr8PwmoQBrWlNd7bAamj1GmlQ/exec';
   // ⚠️ REPLACE with your reCAPTCHA v3 site key (same as in the script tag above)
   var RECAPTCHA_SITE_KEY = '6LeLnK0sAAAAABgO7bYgtJxEglwpsslW7YTKrvI0';
 
@@ -1092,7 +1092,7 @@
       data.recaptcha_score = score || '';
 
       // If Apps Script URL isn't configured yet, just log and show success
-      if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL') {
+      if (APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwzPNH5PRUmzxQ3s0H71cc_oOS8IwF-dlwYbRWv5bLN0kr8PwmoQBrWlNd7bAamj1GmlQ/exec') {
         console.log('Form data (Apps Script not configured yet):', data);
         form.style.display = 'none';
         success.style.display = 'block';
