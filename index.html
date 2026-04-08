@@ -1016,6 +1016,7 @@
   </div>
 </footer>
 
+<iframe name="hidden-iframe" id="hidden-iframe" style="display:none;"></iframe>
 </div><!-- /site-content -->
 
 <script>
@@ -1064,79 +1065,88 @@
 
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-  // ⚠️ REPLACE with your deployed Google Apps Script URL
   var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzPNH5PRUmzxQ3s0H71cc_oOS8IwF-dlwYbRWv5bLN0kr8PwmoQBrWlNd7bAamj1GmlQ/exec';
-  // ⚠️ REPLACE with your reCAPTCHA v3 site key (same as in the script tag above)
   var RECAPTCHA_SITE_KEY = '6LeLnK0sAAAAABgO7bYgtJxEglwpsslW7YTKrvI0';
 
-  // Form submission handler with reCAPTCHA v3 + Apps Script backend
+  // Listen for success/error messages from the hidden iframe
+  window.addEventListener('message', function(event) {
+    if (event.data === 'form_success') {
+      document.getElementById('stakeholder-form').style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+      if (typeof gtag === 'function') {
+        gtag('event', 'form_submission', { event_category: 'engagement' });
+      }
+    } else if (event.data === 'form_error' || event.data === 'captcha_failed') {
+      var btn = document.querySelector('#stakeholder-form button[type="submit"]');
+      btn.disabled = false;
+      btn.textContent = 'Submit Your Input';
+      var errorDiv = document.getElementById('form-submit-error');
+      errorDiv.textContent = event.data === 'captcha_failed' ? 'Verification failed. Please try again.' : 'Something went wrong. Please try again.';
+      errorDiv.style.display = 'block';
+    }
+  });
+
   function handleSubmit(e) {
     e.preventDefault();
     var form = document.getElementById('stakeholder-form');
     var submitBtn = form.querySelector('button[type="submit"]');
-    var success = document.getElementById('form-success');
-    var errorDiv = document.getElementById('form-submit-error');
-
-    // Disable button and show loading state
     submitBtn.disabled = true;
     submitBtn.textContent = 'Submitting...';
+    var errorDiv = document.getElementById('form-submit-error');
     if (errorDiv) errorDiv.style.display = 'none';
 
-    // Collect form data
-    var data = Object.fromEntries(new FormData(form));
-    data.contact_ok = document.getElementById('contact-ok').checked;
+    function doSubmit(token) {
+      // Build a hidden form that POSTs to Apps Script via hidden iframe
+      var hiddenForm = document.createElement('form');
+      hiddenForm.method = 'POST';
+      hiddenForm.action = APPS_SCRIPT_URL;
+      hiddenForm.target = 'hidden-iframe';
+      hiddenForm.style.display = 'none';
 
-    // Get reCAPTCHA token, then submit
-    function submitData(token, score) {
-      data.recaptcha_token = token || '';
-      data.recaptcha_score = score || '';
+      var fields = {
+        name: form.querySelector('#name').value,
+        email: form.querySelector('#email').value,
+        organization: form.querySelector('#organization').value,
+        role: form.querySelector('#role').value,
+        industry: form.querySelector('#industry').value,
+        pain_point: form.querySelector('#pain-point').value,
+        how_help: form.querySelector('#how-help').value,
+        contact_ok: document.getElementById('contact-ok').checked ? 'true' : 'false',
+        recaptcha_token: token || '',
+        recaptcha_score: ''
+      };
 
-      // If Apps Script URL isn't configured yet, just log and show success
-      if (APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwzPNH5PRUmzxQ3s0H71cc_oOS8IwF-dlwYbRWv5bLN0kr8PwmoQBrWlNd7bAamj1GmlQ/exec') {
-        console.log('Form data (Apps Script not configured yet):', data);
-        form.style.display = 'none';
-        success.style.display = 'block';
-        return;
+      for (var key in fields) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = fields[key];
+        hiddenForm.appendChild(input);
       }
 
-      fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(data)
-      })
-      .then(function() {
-        // Google Apps Script with no-cors returns opaque response, assume success
-        form.style.display = 'none';
-        success.style.display = 'block';
-        // Track form submission in GA4
-        if (typeof gtag === 'function') {
-          gtag('event', 'form_submission', {
-            event_category: 'engagement',
-            event_label: data.industry || 'unknown'
-          });
+      document.body.appendChild(hiddenForm);
+      hiddenForm.submit();
+      document.body.removeChild(hiddenForm);
+
+      // Fallback: if no postMessage received in 8 seconds, assume success
+      setTimeout(function() {
+        var formEl = document.getElementById('stakeholder-form');
+        if (formEl && formEl.style.display !== 'none') {
+          formEl.style.display = 'none';
+          document.getElementById('form-success').style.display = 'block';
         }
-      })
-      .catch(function(err) {
-        console.error('Submission error:', err);
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Your Input';
-        if (errorDiv) {
-          errorDiv.textContent = 'Something went wrong. Please try again.';
-          errorDiv.style.display = 'block';
-        }
-      });
+      }, 8000);
     }
 
-    // Execute reCAPTCHA v3 if configured
-    if (RECAPTCHA_SITE_KEY !== '6LeLnK0sAAAAABgO7bYgtJxEglwpsslW7YTKrvI0' && typeof grecaptcha !== 'undefined') {
+    // Execute reCAPTCHA v3 then submit
+    if (typeof grecaptcha !== 'undefined') {
       grecaptcha.ready(function() {
         grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit_form' })
-          .then(function(token) { submitData(token, ''); })
-          .catch(function() { submitData('', ''); });
+          .then(function(token) { doSubmit(token); })
+          .catch(function() { doSubmit(''); });
       });
     } else {
-      submitData('', '');
+      doSubmit('');
     }
   }
 

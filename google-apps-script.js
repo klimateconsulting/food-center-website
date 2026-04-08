@@ -1,45 +1,37 @@
 // ============================================================
 // FOOD Center — Form Submission Backend (Google Apps Script)
 // ============================================================
-// This script receives form submissions, validates reCAPTCHA,
+// Receives form submissions via standard POST, validates reCAPTCHA,
 // and logs entries to a Google Sheet.
 //
 // SETUP:
-// 1. Create a Google Sheet named "FOOD Center Form Submissions"
-// 2. Open Extensions > Apps Script
-// 3. Paste this entire file into the script editor
-// 4. Replace 6LeLnK0sAAAAAAcogU9tRCYZ001dKQn1AILGi6j4 below with your reCAPTCHA v3 secret key
-// 5. Click Deploy > New deployment > Web app
-//    - Execute as: Me
-//    - Who has access: Anyone
-// 6. Copy the deployment URL and paste it into index.html (APPS_SCRIPT_URL)
+// 1. Open your Google Sheet > Extensions > Apps Script
+// 2. Paste this entire file into the script editor
+// 3. Deploy > Manage deployments > Edit (pencil icon) > New version > Deploy
+//    (You must create a NEW version each time you update the code)
 // ============================================================
 
-// ⚠️ REPLACE with your reCAPTCHA v3 secret key
 var RECAPTCHA_SECRET = '6LeLnK0sAAAAAAcogU9tRCYZ001dKQn1AILGi6j4';
-
-// Minimum reCAPTCHA score to accept (0.0 - 1.0, higher = more likely human)
 var MIN_SCORE = 0.3;
 
 function doPost(e) {
   try {
-    var data = JSON.parse(e.postData.contents);
+    // Read form fields from standard form POST (e.parameter)
+    var p = e.parameter;
 
     // ── Validate reCAPTCHA ──
-    if (RECAPTCHA_SECRET && data.recaptcha_token) {
+    if (RECAPTCHA_SECRET && p.recaptcha_token) {
       var recaptchaResponse = UrlFetchApp.fetch('https://www.google.com/recaptcha/api/siteverify', {
         method: 'post',
         payload: {
           secret: RECAPTCHA_SECRET,
-          response: data.recaptcha_token || ''
+          response: p.recaptcha_token
         }
       });
       var recaptchaResult = JSON.parse(recaptchaResponse.getContentText());
 
-      if (!recaptchaResult.success || recaptchaResult.score < MIN_SCORE) {
-        return ContentService
-          .createTextOutput(JSON.stringify({ status: 'error', message: 'reCAPTCHA verification failed' }))
-          .setMimeType(ContentService.MimeType.JSON);
+      if (!recaptchaResult.success || (recaptchaResult.score && recaptchaResult.score < MIN_SCORE)) {
+        return HtmlService.createHtmlOutput('<html><body><script>window.top.postMessage("captcha_failed","*");</script></body></html>');
       }
     }
 
@@ -47,7 +39,7 @@ function doPost(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName('Submissions') || ss.insertSheet('Submissions');
 
-    // Add headers if this is the first entry
+    // Add headers if first entry
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
         'Timestamp',
@@ -59,49 +51,35 @@ function doPost(e) {
         'Biggest Barrier',
         'How Can We Help',
         'May Contact',
-        'reCAPTCHA Score',
-        'IP (approximate)'
+        'reCAPTCHA Score'
       ]);
-      // Bold the header row
-      sheet.getRange(1, 1, 1, 11).setFontWeight('bold');
-      // Freeze header row
+      sheet.getRange(1, 1, 1, 10).setFontWeight('bold');
       sheet.setFrozenRows(1);
     }
 
-    // Append the submission
     sheet.appendRow([
       new Date().toISOString(),
-      data.name || '',
-      data.email || '',
-      data.organization || '',
-      data.role || '',
-      data.industry || '',
-      data.pain_point || '',
-      data.how_help || '',
-      data.contact_ok ? 'Yes' : 'No',
-      data.recaptcha_score || 'N/A',
-      ''
+      p.name || '',
+      p.email || '',
+      p.organization || '',
+      p.role || '',
+      p.industry || '',
+      p.pain_point || '',
+      p.how_help || '',
+      p.contact_ok === 'true' ? 'Yes' : 'No',
+      p.recaptcha_score || 'N/A'
     ]);
 
-    // Auto-resize columns for readability
-    try { sheet.autoResizeColumns(1, 11); } catch(err) {}
+    try { sheet.autoResizeColumns(1, 10); } catch(err) {}
 
-    // ── Send notification email (optional) ──
-    // Uncomment and edit the line below to get email alerts on new submissions:
-    // MailApp.sendEmail('arian@klimate.consulting', 'New FOOD Center Form Submission', 'Name: ' + data.name + '\nEmail: ' + data.email + '\nOrg: ' + data.organization + '\nIndustry: ' + data.industry);
-
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: 'success', message: 'Submission recorded' }))
-      .setMimeType(ContentService.MimeType.JSON);
+    // Return a small HTML page that signals success to the parent window
+    return HtmlService.createHtmlOutput('<html><body><script>window.top.postMessage("form_success","*");</script></body></html>');
 
   } catch (error) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: 'error', message: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return HtmlService.createHtmlOutput('<html><body><script>window.top.postMessage("form_error","*");</script></body></html>');
   }
 }
 
-// Handle CORS preflight
 function doGet(e) {
   return ContentService
     .createTextOutput(JSON.stringify({ status: 'ok', message: 'FOOD Center Form Backend is running' }))
