@@ -1113,7 +1113,12 @@
         how_help: form.querySelector('#how-help').value,
         contact_ok: document.getElementById('contact-ok').checked ? 'true' : 'false',
         recaptcha_token: token || '',
-        recaptcha_score: ''
+        user_agent: navigator.userAgent || '',
+        screen_size: screen.width + 'x' + screen.height,
+        language: navigator.language || '',
+        referrer: document.referrer || '',
+        page_url: window.location.href,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || ''
       };
 
       for (var key in fields) {

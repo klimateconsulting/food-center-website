@@ -2,13 +2,9 @@
 // FOOD Center — Form Submission Backend (Google Apps Script)
 // ============================================================
 // Receives form submissions via standard POST, validates reCAPTCHA,
-// and logs entries to a Google Sheet.
+// and logs entries to a Google Sheet with analytics metadata.
 //
-// SETUP:
-// 1. Open your Google Sheet > Extensions > Apps Script
-// 2. Paste this entire file into the script editor
-// 3. Deploy > Manage deployments > Edit (pencil icon) > New version > Deploy
-//    (You must create a NEW version each time you update the code)
+// TO UPDATE: Deploy > Manage deployments > Edit > New version > Deploy
 // ============================================================
 
 var RECAPTCHA_SECRET = '6LeLnK0sAAAAAAcogU9tRCYZ001dKQn1AILGi6j4';
@@ -16,10 +12,10 @@ var MIN_SCORE = 0.3;
 
 function doPost(e) {
   try {
-    // Read form fields from standard form POST (e.parameter)
     var p = e.parameter;
+    var recaptchaScore = 'N/A';
 
-    // ── Validate reCAPTCHA ──
+    // ── Validate reCAPTCHA and capture score ──
     if (RECAPTCHA_SECRET && p.recaptcha_token) {
       var recaptchaResponse = UrlFetchApp.fetch('https://www.google.com/recaptcha/api/siteverify', {
         method: 'post',
@@ -29,6 +25,7 @@ function doPost(e) {
         }
       });
       var recaptchaResult = JSON.parse(recaptchaResponse.getContentText());
+      recaptchaScore = recaptchaResult.score || 'N/A';
 
       if (!recaptchaResult.success || (recaptchaResult.score && recaptchaResult.score < MIN_SCORE)) {
         return HtmlService.createHtmlOutput('<html><body><script>window.top.postMessage("captcha_failed","*");</script></body></html>');
@@ -51,9 +48,15 @@ function doPost(e) {
         'Biggest Barrier',
         'How Can We Help',
         'May Contact',
-        'reCAPTCHA Score'
+        'reCAPTCHA Score',
+        'Browser / User Agent',
+        'Screen Size',
+        'Language',
+        'Timezone',
+        'Referrer',
+        'Page URL'
       ]);
-      sheet.getRange(1, 1, 1, 10).setFontWeight('bold');
+      sheet.getRange(1, 1, 1, 16).setFontWeight('bold');
       sheet.setFrozenRows(1);
     }
 
@@ -67,12 +70,17 @@ function doPost(e) {
       p.pain_point || '',
       p.how_help || '',
       p.contact_ok === 'true' ? 'Yes' : 'No',
-      p.recaptcha_score || 'N/A'
+      recaptchaScore,
+      p.user_agent || '',
+      p.screen_size || '',
+      p.language || '',
+      p.timezone || '',
+      p.referrer || '(direct)',
+      p.page_url || ''
     ]);
 
-    try { sheet.autoResizeColumns(1, 10); } catch(err) {}
+    try { sheet.autoResizeColumns(1, 16); } catch(err) {}
 
-    // Return a small HTML page that signals success to the parent window
     return HtmlService.createHtmlOutput('<html><body><script>window.top.postMessage("form_success","*");</script></body></html>');
 
   } catch (error) {
