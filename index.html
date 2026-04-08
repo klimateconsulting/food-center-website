@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FOOD Center — Food &amp; Beverage Operational Optimization and Deployment Center</title>
   <link rel="icon" type="image/png" href="logo/logo_final.png">
+
+  <!-- Google Analytics 4 -->
+  <!-- ⚠️ REPLACE G-XXXXXXXXXX with your GA4 Measurement ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <!-- reCAPTCHA v3 -->
+  <!-- ⚠️ REPLACE YOUR_RECAPTCHA_SITE_KEY with your reCAPTCHA v3 site key -->
+  <script src="https://www.google.com/recaptcha/api.js?render=YOUR_RECAPTCHA_SITE_KEY"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -975,6 +990,7 @@
           <label for="contact-ok">Yes, you may contact me about participating in stakeholder interviews, workshops, or other engagement activities.</label>
         </div>
 
+        <div class="error-msg" id="form-submit-error" style="display:none; margin-bottom:1rem; text-align:center;"></div>
         <button type="submit" class="btn btn-primary">Submit Your Input</button>
       </form>
 
@@ -1048,18 +1064,80 @@
 
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-  // Form submission handler
+  // ⚠️ REPLACE with your deployed Google Apps Script URL
+  var APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';
+  // ⚠️ REPLACE with your reCAPTCHA v3 site key (same as in the script tag above)
+  var RECAPTCHA_SITE_KEY = 'YOUR_RECAPTCHA_SITE_KEY';
+
+  // Form submission handler with reCAPTCHA v3 + Apps Script backend
   function handleSubmit(e) {
     e.preventDefault();
-    const form = document.getElementById('stakeholder-form');
-    const success = document.getElementById('form-success');
-    // Collect form data (ready to wire up to a backend)
-    const data = Object.fromEntries(new FormData(form));
+    var form = document.getElementById('stakeholder-form');
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var success = document.getElementById('form-success');
+    var errorDiv = document.getElementById('form-submit-error');
+
+    // Disable button and show loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+    if (errorDiv) errorDiv.style.display = 'none';
+
+    // Collect form data
+    var data = Object.fromEntries(new FormData(form));
     data.contact_ok = document.getElementById('contact-ok').checked;
-    console.log('Form submission:', data);
-    // Show success message
-    form.style.display = 'none';
-    success.style.display = 'block';
+
+    // Get reCAPTCHA token, then submit
+    function submitData(token, score) {
+      data.recaptcha_token = token || '';
+      data.recaptcha_score = score || '';
+
+      // If Apps Script URL isn't configured yet, just log and show success
+      if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL') {
+        console.log('Form data (Apps Script not configured yet):', data);
+        form.style.display = 'none';
+        success.style.display = 'block';
+        return;
+      }
+
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(function() {
+        // Google Apps Script with no-cors returns opaque response, assume success
+        form.style.display = 'none';
+        success.style.display = 'block';
+        // Track form submission in GA4
+        if (typeof gtag === 'function') {
+          gtag('event', 'form_submission', {
+            event_category: 'engagement',
+            event_label: data.industry || 'unknown'
+          });
+        }
+      })
+      .catch(function(err) {
+        console.error('Submission error:', err);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Your Input';
+        if (errorDiv) {
+          errorDiv.textContent = 'Something went wrong. Please try again.';
+          errorDiv.style.display = 'block';
+        }
+      });
+    }
+
+    // Execute reCAPTCHA v3 if configured
+    if (RECAPTCHA_SITE_KEY !== 'YOUR_RECAPTCHA_SITE_KEY' && typeof grecaptcha !== 'undefined') {
+      grecaptcha.ready(function() {
+        grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit_form' })
+          .then(function(token) { submitData(token, ''); })
+          .catch(function() { submitData('', ''); });
+      });
+    } else {
+      submitData('', '');
+    }
   }
 
   // Smooth scroll for nav links
