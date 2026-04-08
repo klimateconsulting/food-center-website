@@ -8,7 +8,7 @@
 // 1. Create a Google Sheet named "FOOD Center Form Submissions"
 // 2. Open Extensions > Apps Script
 // 3. Paste this entire file into the script editor
-// 4. Replace YOUR_RECAPTCHA_SECRET_KEY below with your reCAPTCHA v3 secret key
+// 4. Replace 6LeLnK0sAAAAAAcogU9tRCYZ001dKQn1AILGi6j4 below with your reCAPTCHA v3 secret key
 // 5. Click Deploy > New deployment > Web app
 //    - Execute as: Me
 //    - Who has access: Anyone
@@ -16,7 +16,7 @@
 // ============================================================
 
 // ⚠️ REPLACE with your reCAPTCHA v3 secret key
-var RECAPTCHA_SECRET = 'YOUR_RECAPTCHA_SECRET_KEY';
+var RECAPTCHA_SECRET = '6LeLnK0sAAAAAAcogU9tRCYZ001dKQn1AILGi6j4';
 
 // Minimum reCAPTCHA score to accept (0.0 - 1.0, higher = more likely human)
 var MIN_SCORE = 0.3;
@@ -26,7 +26,7 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
 
     // ── Validate reCAPTCHA ──
-    if (RECAPTCHA_SECRET !== 'YOUR_RECAPTCHA_SECRET_KEY') {
+    if (RECAPTCHA_SECRET !== '6LeLnK0sAAAAAAcogU9tRCYZ001dKQn1AILGi6j4') {
       var recaptchaResponse = UrlFetchApp.fetch('https://www.google.com/recaptcha/api/siteverify', {
         method: 'post',
         payload: {

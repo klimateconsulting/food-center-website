@@ -17,8 +17,8 @@
   </script>
 
   <!-- reCAPTCHA v3 -->
-  <!-- ⚠️ REPLACE YOUR_RECAPTCHA_SITE_KEY with your reCAPTCHA v3 site key -->
-  <script src="https://www.google.com/recaptcha/api.js?render=YOUR_RECAPTCHA_SITE_KEY"></script>
+  <!-- ⚠️ REPLACE 6LeLnK0sAAAAABgO7bYgtJxEglwpsslW7YTKrvI0 with your reCAPTCHA v3 site key -->
+  <script src="https://www.google.com/recaptcha/api.js?render=6LeLnK0sAAAAABgO7bYgtJxEglwpsslW7YTKrvI0"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1067,7 +1067,7 @@
   // ⚠️ REPLACE with your deployed Google Apps Script URL
   var APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';
   // ⚠️ REPLACE with your reCAPTCHA v3 site key (same as in the script tag above)
-  var RECAPTCHA_SITE_KEY = 'YOUR_RECAPTCHA_SITE_KEY';
+  var RECAPTCHA_SITE_KEY = '6LeLnK0sAAAAABgO7bYgtJxEglwpsslW7YTKrvI0';
 
   // Form submission handler with reCAPTCHA v3 + Apps Script backend
   function handleSubmit(e) {
@@ -1129,7 +1129,7 @@
     }
 
     // Execute reCAPTCHA v3 if configured
-    if (RECAPTCHA_SITE_KEY !== 'YOUR_RECAPTCHA_SITE_KEY' && typeof grecaptcha !== 'undefined') {
+    if (RECAPTCHA_SITE_KEY !== '6LeLnK0sAAAAABgO7bYgtJxEglwpsslW7YTKrvI0' && typeof grecaptcha !== 'undefined') {
       grecaptcha.ready(function() {
         grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit_form' })
           .then(function(token) { submitData(token, ''); })
