@@ -1003,12 +1003,11 @@
 </div><!-- /site-content -->
 
 <script>
-  // Password check — SHA-256 hash of "foodcenter2026"
-  const HASH = 'b3d21601e9243877d082d763042eedd3e5bd9e467d06cf88104a300b4cd2d638';
+  // Password check — obfuscated via base64 + reverse
+  const K = 'NjIwMnJldG5lY2Rvb2Y=';
 
-  async function sha256(str) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  function decode(s) {
+    return atob(s).split('').reverse().join('');
   }
 
   // Check if already authenticated this session
@@ -1017,11 +1016,10 @@
     document.getElementById('site-content').classList.add('unlocked');
   }
 
-  async function checkPassword(e) {
+  function checkPassword(e) {
     e.preventDefault();
-    const input = document.getElementById('pw-input');
-    const hash = await sha256(input.value);
-    if (hash === HASH) {
+    var input = document.getElementById('pw-input');
+    if (input.value === decode(K)) {
       sessionStorage.setItem('food_auth', 'true');
       document.getElementById('password-gate').classList.add('hidden');
       document.getElementById('site-content').classList.add('unlocked');
