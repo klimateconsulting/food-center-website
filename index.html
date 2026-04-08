@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOOD Center — Food &amp; Beverage Operational Optimization and Deployment Center</title>
+  <link rel="icon" type="image/png" href="logo/logo_final.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-dark: #1a3a2a;
+      --green-mid: #2d6a4f;
+      --green-light: #52b788;
+      --green-pale: #d8f3dc;
+      --gold: #b68d40;
+      --gold-light: #f5e6c8;
+      --navy: #1b2a4a;
+      --slate: #4a5568;
+      --light-bg: #f8faf9;
+      --white: #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #2d3748;
+      line-height: 1.7;
+      background: var(--white);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo img { height: 44px; }
+    .nav-logo span {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--green-dark);
+      letter-spacing: -0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--slate);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--green-mid); }
+    .nav-cta {
+      background: var(--green-mid);
+      color: white !important;
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--green-dark); }
+
+    /* Mobile nav */
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--green-dark); margin: 5px 0; transition: 0.3s; }
+
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 1rem 2rem;
+        gap: 1rem;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+      }
+      .nav-links.open { display: flex; }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding-top: 70px;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(26, 58, 42, 0.88) 0%,
+        rgba(45, 106, 79, 0.80) 40%,
+        rgba(27, 42, 74, 0.75) 100%
+      );
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 900px;
+      padding: 2rem;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: var(--green-pale);
+      padding: 0.4rem 1.2rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(4px);
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      color: white;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 .accent { color: var(--green-pale); }
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: white;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      margin-bottom: 1.5rem;
+      opacity: 0.9;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.88);
+      max-width: 720px;
+      margin: 0 auto 2rem;
+      line-height: 1.8;
+    }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.25s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+    .btn-primary:hover { background: #40a676; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(82,183,136,0.4); }
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+    .btn-outline:hover { border-color: white; background: rgba(255,255,255,0.1); }
+
+    /* ── SECTIONS ── */
+    section { padding: 5rem 2rem; }
+
+    .section-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 3.5rem;
+    }
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-bottom: 0.75rem;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      color: var(--green-dark);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .section-header p {
+      font-size: 1.05rem;
+      color: var(--slate);
+      line-height: 1.8;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    /* ── ABOUT ── */
+    .about { background: var(--light-bg); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .about-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--green-dark);
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+    .about-text p {
+      color: var(--slate);
+      margin-bottom: 1.25rem;
+      line-height: 1.8;
+    }
+    .about-text .highlight {
+      background: linear-gradient(135deg, var(--green-pale), var(--gold-light));
+      padding: 1.25rem 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid var(--green-mid);
+      font-weight: 500;
+      color: var(--green-dark);
+      margin-top: 1.5rem;
+    }
+    .about-image {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    }
+    .about-image img { width: 100%; display: block; }
+
+    @media (max-width: 768px) {
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    }
+
+    /* ── VALUE CHAIN / INFOGRAPHIC ── */
+    .value-chain { background: var(--white); }
+    .infographic-wrapper {
+      background: var(--light-bg);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+    }
+    .infographic-wrapper img {
+      width: 100%;
+      border-radius: 12px;
+      display: block;
+    }
+
+    /* ── SUBSECTOR GRID ── */
+    .subsectors {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .subsector-card {
+      background: var(--white);
+      border: 1px solid #e8efe8;
+      border-radius: 14px;
+      padding: 2rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .subsector-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green-mid), var(--green-light));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .subsector-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+    .subsector-card:hover::before { opacity: 1; }
+    .subsector-icon {
+      width: 52px; height: 52px;
+      background: var(--green-pale);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .subsector-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 0.75rem;
+    }
+    .subsector-card p {
+      font-size: 0.9rem;
+      color: var(--slate);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 900px) {
+      .subsectors { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .subsectors { grid-template-columns: 1fr; }
+    }
+
+    /* ── VOICE / ENGAGEMENT ── */
+    .voice { background: var(--light-bg); }
+    .voice-intro {
+      max-width: 800px;
+      margin: 0 auto 3rem;
+      text-align: center;
+    }
+    .voice-intro p {
+      color: var(--slate);
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+
+    .engagement-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    .engagement-card {
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      transition: transform 0.3s;
+    }
+    .engagement-card:hover { transform: translateY(-4px); }
+    .engagement-card-img {
+      height: 200px;
+      overflow: hidden;
+    }
+    .engagement-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s;
+    }
+    .engagement-card:hover .engagement-card-img img { transform: scale(1.05); }
+    .engagement-card-body {
+      padding: 1.75rem;
+    }
+    .engagement-card-body h3 {
+      font-size: 1.1rem;
+      color: var(--green-dark);
+      margin-bottom: 0.75rem;
+    }
+    .engagement-card-body p {
+      font-size: 0.92rem;
+      color: var(--slate);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 900px) {
+      .engagement-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── OUTPUTS ── */
+    .outputs { background: var(--white); }
+    .outputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .output-card {
+      background: linear-gradient(135deg, var(--green-dark), var(--navy));
+      border-radius: 16px;
+      padding: 2.5rem;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .output-card::before {
+      content: '';
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 150px; height: 150px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .output-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--green-pale);
+    }
+    .output-card p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 600px) {
+      .outputs-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── GET INVOLVED FORM ── */
+    .get-involved {
+      background: var(--light-bg);
+      padding: 5rem 2rem;
+    }
+    .form-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: start;
+    }
+    .form-intro h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--green-dark);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .form-intro p {
+      color: var(--slate);
+      line-height: 1.8;
+      margin-bottom: 1.25rem;
+    }
+    .form-intro .form-note {
+      background: linear-gradient(135deg, var(--green-pale), var(--gold-light));
+      padding: 1.25rem 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid var(--green-mid);
+      font-size: 0.9rem;
+      color: var(--green-dark);
+      line-height: 1.7;
+      margin-top: 1.5rem;
+    }
+    .form-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--green-dark);
+      margin-bottom: 0.4rem;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid #d4ddd4;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: #2d3748;
+      background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+    }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+    .form-group select { cursor: pointer; }
+
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 18px; height: 18px;
+      margin-top: 2px;
+      accent-color: var(--green-mid);
+      cursor: pointer;
+    }
+    .checkbox-group label {
+      font-size: 0.9rem;
+      color: var(--slate);
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .form-card .btn-primary {
+      width: 100%;
+      justify-content: center;
+      font-size: 1.05rem;
+      padding: 0.9rem;
+    }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    .form-success h3 {
+      font-size: 1.3rem;
+      color: var(--green-dark);
+      margin-bottom: 0.75rem;
+    }
+    .form-success p {
+      color: var(--slate);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      .form-layout { grid-template-columns: 1fr; gap: 2rem; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0f1f17;
+      color: rgba(255,255,255,0.6);
+      padding: 3rem 2rem;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-logo { display: flex; align-items: center; gap: 0.75rem; }
+    .footer-logo img { height: 36px; opacity: 0.8; }
+    .footer-logo span { font-weight: 600; color: rgba(255,255,255,0.8); font-size: 0.95rem; }
+    .footer-text { font-size: 0.85rem; }
+    .footer-text a { color: var(--green-light); text-decoration: none; }
+    .footer-text a:hover { text-decoration: underline; }
+
+    /* ── ANIMATIONS ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── PHOTO STRIP ── */
+    .photo-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      height: 280px;
+      overflow: hidden;
+    }
+    .photo-strip img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s;
+    }
+    .photo-strip img:hover { transform: scale(1.05); }
+    @media (max-width: 768px) {
+      .photo-strip { grid-template-columns: repeat(2, 1fr); height: 200px; }
+    }
+    /* ── PASSWORD GATE ── */
+    .password-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--navy) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .password-gate.hidden { display: none; }
+    .password-box {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .password-box img { height: 72px; margin-bottom: 1.5rem; }
+    .password-box h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--green-dark);
+      margin-bottom: 0.5rem;
+    }
+    .password-box p {
+      color: var(--slate);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+    .password-box input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid #d4ddd4;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      text-align: center;
+      outline: none;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .password-box input:focus {
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+    }
+    .password-box input.error {
+      border-color: #e53e3e;
+      box-shadow: 0 0 0 3px rgba(229,62,62,0.1);
+    }
+    .password-box .error-msg {
+      color: #e53e3e;
+      font-size: 0.85rem;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .password-box button {
+      width: 100%;
+      padding: 0.8rem;
+      background: var(--green-mid);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .password-box button:hover { background: var(--green-dark); }
+    .site-content { display: none; }
+    .site-content.unlocked { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ── PASSWORD GATE ── -->
+<div class="password-gate" id="password-gate">
+  <div class="password-box">
+    <img src="logo/logo_final.png" alt="FOOD Center Logo">
+    <h2>FOOD Center</h2>
+    <p>This site is currently in preview. Please enter the access code to continue.</p>
+    <form onsubmit="checkPassword(event)">
+      <input type="password" id="pw-input" placeholder="Enter access code" autofocus>
+      <div class="error-msg" id="pw-error">Incorrect access code. Please try again.</div>
+      <button type="submit">Enter Site</button>
+    </form>
+  </div>
+</div>
+
+<div class="site-content" id="site-content">
+
+<!-- ── NAVIGATION ── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <img src="logo/logo_final.png" alt="FOOD Center Logo">
+      <span>FOOD Center</span>
+    </a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#value-chain">Value Chain</a></li>
+      <li><a href="#engagement">Engagement</a></li>
+      <li><a href="#outputs">Outputs</a></li>
+      <li><a href="#get-involved" class="nav-cta">Get Involved</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="images/hero-aerial.jpg" alt="Aerial view of farmland during harvest">
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">U.S. Department of Energy Initiative</div>
+    <h1>Help Shape the Future of U.S. <span class="accent">Food &amp; Beverage</span> Innovation</h1>
+    <p class="hero-subtitle">Food &amp; Beverage Operational Optimization and Deployment Center</p>
+    <p>The U.S. Department of Energy is exploring major new investments to strengthen productivity, competitiveness, and affordability across the agriculture and food &amp; beverage value chains. We are engaging industry leaders to pinpoint the technologies, processes, and infrastructure that will deliver the biggest impact.</p>
+    <div class="hero-buttons">
+      <a href="#get-involved" class="btn btn-primary">Get Involved</a>
+      <a href="#about" class="btn btn-outline">Learn More</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text fade-up">
+        <div class="section-label">About the FOOD Center</div>
+        <h2>Driving Competitiveness Across the Entire Value Chain</h2>
+        <p>The FOOD Center is being designed to drive competitiveness and affordability across the entire food and beverage value chain &mdash; from field and farm to factory, distribution, and retail. It brings together producers, manufacturers, distributors, retailers, original equipment manufacturers (OEMs), and trade associations to identify where Department of Energy investments in research and development can have the greatest national impact.</p>
+        <div class="highlight">
+          These insights will directly inform the formation of a <strong>multi-million-dollar national R&amp;D center</strong> focused on helping U.S. companies produce more food and beverage products at lower cost for American consumers.
+        </div>
+      </div>
+      <div class="about-image fade-up">
+        <img src="images/cattle.jpg" alt="Cattle at sunset on a farm">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PHOTO STRIP ── -->
+<div class="photo-strip">
+  <img src="https://images.pexels.com/photos/28412626/pexels-photo-28412626.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Aerial view of green and brown farmland">
+  <img src="https://images.pexels.com/photos/18900720/pexels-photo-18900720.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Aerial view of a field during harvest">
+  <img src="https://images.pexels.com/photos/10101928/pexels-photo-10101928.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Aerial view of a farm field">
+  <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80" alt="Aerial shot of harvester on wheat field">
+</div>
+
+<!-- ── VALUE CHAIN ── -->
+<section class="value-chain" id="value-chain">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">Value Chain Coverage</div>
+      <h2>Food &amp; Beverage Value Chain Coverage</h2>
+      <p>The FOOD Center takes a holistic view of the entire food and beverage system. Unlike initiatives focused on a single sub-sector, the Center is designed to examine the full value chain, capturing not only what happens on the farm or on the processing floor, but also how products move, are stored, and reach consumers.</p>
+    </div>
+
+    <div class="infographic-wrapper fade-up">
+      <img src="images/infographic.png" alt="FOOD Center value chain infographic showing Agriculture, Food Processing, Transportation & Storage, Retail & Distribution, Byproducts & Waste Streams, and Crosscutting Technologies">
+    </div>
+
+    <div class="subsectors fade-up">
+      <div class="subsector-card">
+        <div class="subsector-icon">
+          <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" color="#2d6a4f"><path d="M12 22c4-4 8-7.5 8-12a8 8 0 10-16 0c0 4.5 4 8 8 12z"/><path d="M12 2v10"/><path d="M8 6l4 4 4-4"/></svg>
+        </div>
+        <h3>Agriculture</h3>
+        <p>Crop production, livestock, dairy, aquaculture, and related farm-level processes. Topics include precision agriculture, farm automation, robotics, water and land use productivity, and energy intensity on the farm.</p>
+      </div>
+      <div class="subsector-card">
+        <div class="subsector-icon">
+          <svg width="28" height="28" fill="none" stroke="#2d6a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 6v12"/><path d="M2 12h20"/></svg>
+        </div>
+        <h3>Food Processing</h3>
+        <p>Industrial operations that transform raw agricultural inputs into food products. Key processes include drying, washing, heating, cooling, sterilization, fermentation, packaging, and refrigeration.</p>
+      </div>
+      <div class="subsector-card">
+        <div class="subsector-icon">
+          <svg width="28" height="28" fill="none" stroke="#2d6a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <h3>Transportation &amp; Storage</h3>
+        <p>Cross-cutting logistics that link every node of the value chain. Focus areas include warehouse energy performance, cold storage technology, and fleet-level cost-effectiveness in food transport.</p>
+      </div>
+      <div class="subsector-card">
+        <div class="subsector-icon">
+          <svg width="28" height="28" fill="none" stroke="#2d6a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path d="M9 22V12h6v10"/></svg>
+        </div>
+        <h3>Retail &amp; Distribution</h3>
+        <p>Grocery, foodservice, and direct-to-consumer channels. The Center examines refrigeration, cold chain integrity, store-level energy use, and the connectivity between distribution networks and retail facilities.</p>
+      </div>
+      <div class="subsector-card">
+        <div class="subsector-icon">
+          <svg width="28" height="28" fill="none" stroke="#2d6a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-6.2-8.6"/><path d="M21 3v6h-6"/></svg>
+        </div>
+        <h3>Byproducts &amp; Waste Streams</h3>
+        <p>Opportunities to recover value from food production residuals, including biogas, compostables, and material reuse, to improve overall system productivity.</p>
+      </div>
+      <div class="subsector-card">
+        <div class="subsector-icon">
+          <svg width="28" height="28" fill="none" stroke="#2d6a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+        <h3>Crosscutting Technologies</h3>
+        <p>Innovations with broad applicability across sub-sectors: AI and machine learning, data sharing platforms, advanced sensors, and digital integration across the value chain.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── YOUR VOICE MATTERS / ENGAGEMENT ── -->
+<section class="voice" id="engagement">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">Your Voice Matters</div>
+      <h2>A Rare Opportunity to Influence Federal Investment</h2>
+      <p>This is a rare opportunity to influence where the Department of Energy invests, what challenges get prioritized, and who is at the table.</p>
+    </div>
+
+    <div class="voice-intro fade-up">
+      <p>The FOOD Center is being developed based on a structured, industry-led customer discovery effort. Rather than arriving with pre-defined solutions, the FOOD Center begins by listening &mdash; systematically gathering input from stakeholders across key sub-sectors to build a rigorous, evidence-based picture of where the food and beverage industry most needs support.</p>
+    </div>
+
+    <div class="engagement-grid fade-up">
+      <div class="engagement-card">
+        <div class="engagement-card-img">
+          <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80" alt="Business professionals in a meeting">
+        </div>
+        <div class="engagement-card-body">
+          <h3>1:1 Stakeholder Interviews</h3>
+          <p>Structured conversations with producers, manufacturers, distributors, retailers, OEMs, and trade associations. Interviews are guided by a semi-structured survey and target stakeholders across the U.S., engaging both large multinationals and small operators.</p>
+        </div>
+      </div>
+      <div class="engagement-card">
+        <div class="engagement-card-img">
+          <img src="https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?w=600&q=80" alt="Video conference workshop">
+        </div>
+        <div class="engagement-card-body">
+          <h3>Web-Based Workshops</h3>
+          <p>Facilitated online workshops organized by sub-sector, designed to validate interview and research findings, gather feedback at scale, and refine priorities through collective stakeholder input.</p>
+        </div>
+      </div>
+      <div class="engagement-card">
+        <div class="engagement-card-img">
+          <img src="images/aerial-farm.jpg" alt="Aerial view of farming operations">
+        </div>
+        <div class="engagement-card-body">
+          <h3>In-Person Site Visits</h3>
+          <p>Targeted in-person conversations and facility tours with small farmers and producers across the U.S., grounding the FOOD Center's priorities in the practical realities of diverse operational contexts.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="fade-up" style="text-align:center; color: var(--slate); font-size: 1.05rem; max-width: 800px; margin: 0 auto; line-height: 1.8;">The industry engagement process will result in a pair of outputs that will shape the FOOD Center's long-term direction and guide future Department of Energy investment.</p>
+  </div>
+</section>
+
+<!-- ── OUTPUTS ── -->
+<section class="outputs" id="outputs">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">Deliverables</div>
+      <h2>Shaping the FOOD Center's Direction</h2>
+    </div>
+
+    <div class="outputs-grid fade-up">
+      <div class="output-card">
+        <h3>FOOD Center Charter</h3>
+        <p>Defines how industry engages with the FOOD Center, including governance structure, steering committees, collaboration mechanisms, and a process for continuously surfacing emerging needs and investment priorities.</p>
+      </div>
+      <div class="output-card">
+        <h3>FOOD Center Roadmap</h3>
+        <p>A research and development framework that translates stakeholder-identified challenges and technology gaps into a clear plan for future investments, pilot projects, and national-scale deployment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── GET INVOLVED FORM ── -->
+<section class="get-involved" id="get-involved">
+  <div class="form-layout">
+    <div class="form-intro fade-up">
+      <div class="section-label">Get Involved</div>
+      <h2>We Are Actively Seeking Stakeholder Input</h2>
+      <p>Whether you are a producer, processor, distributor, retailer, technology provider, or trade association &mdash; your perspective is essential to shaping the FOOD Center's research priorities and investment roadmap.</p>
+      <p>We welcome participation through stakeholder interviews, workshops, and ongoing engagement as the FOOD Center develops. Fill out this short form and our team will follow up with you.</p>
+      <div class="form-note">
+        <strong>Your input matters.</strong> The information you share will directly inform where the Department of Energy invests and what challenges get prioritized.
+      </div>
+    </div>
+
+    <div class="form-card fade-up">
+      <form id="stakeholder-form" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" name="name" required placeholder="Jane Smith">
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required placeholder="jane@company.com">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="organization">Organization *</label>
+            <input type="text" id="organization" name="organization" required placeholder="Company or organization name">
+          </div>
+          <div class="form-group">
+            <label for="role">Role / Title</label>
+            <input type="text" id="role" name="role" placeholder="e.g. VP of Operations">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="industry">Industry Segment *</label>
+          <select id="industry" name="industry" required>
+            <option value="" disabled selected>Select your segment</option>
+            <option value="agriculture">Agriculture / Crop Production</option>
+            <option value="livestock">Livestock / Dairy / Aquaculture</option>
+            <option value="food-processing">Food Processing / Manufacturing</option>
+            <option value="beverage">Beverage Production</option>
+            <option value="transportation">Transportation / Cold Chain Logistics</option>
+            <option value="storage">Warehousing / Cold Storage</option>
+            <option value="retail">Retail / Grocery</option>
+            <option value="foodservice">Foodservice / Restaurant</option>
+            <option value="oem">Equipment / Technology Provider (OEM)</option>
+            <option value="trade-association">Trade Association / Industry Group</option>
+            <option value="government">Government / Policy</option>
+            <option value="academia">Academia / Research</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="pain-point">What is the biggest barrier to your organization being more competitive or productive? *</label>
+          <textarea id="pain-point" name="pain_point" required placeholder="Describe the key challenges you face, including any technology- or energy-related barriers..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="how-help">How could a national R&D center best support your needs?</label>
+          <textarea id="how-help" name="how_help" placeholder="What kind of support, resources, or research would make the biggest difference?"></textarea>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="contact-ok" name="contact_ok" checked>
+          <label for="contact-ok">Yes, you may contact me about participating in stakeholder interviews, workshops, or other engagement activities.</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Your Input</button>
+      </form>
+
+      <div class="form-success" id="form-success">
+        <h3>Thank you for your input!</h3>
+        <p>Your response has been recorded. A member of the FOOD Center team will be in touch soon to discuss next steps and potential engagement opportunities.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <img src="logo/logo_final.png" alt="FOOD Center">
+      <span>FOOD Center</span>
+    </div>
+    <div class="footer-text">
+      Food &amp; Beverage Operational Optimization and Deployment Center<br>
+      <a href="https://www.lbl.gov" target="_blank" rel="noopener">Lawrence Berkeley National Laboratory</a>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /site-content -->
+
+<script>
+  // Password check — SHA-256 hash of "foodcenter2026"
+  const HASH = 'b3d21601e9243877d082d763042eedd3e5bd9e467d06cf88104a300b4cd2d638';
+
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Check if already authenticated this session
+  if (sessionStorage.getItem('food_auth') === 'true') {
+    document.getElementById('password-gate').classList.add('hidden');
+    document.getElementById('site-content').classList.add('unlocked');
+  }
+
+  async function checkPassword(e) {
+    e.preventDefault();
+    const input = document.getElementById('pw-input');
+    const hash = await sha256(input.value);
+    if (hash === HASH) {
+      sessionStorage.setItem('food_auth', 'true');
+      document.getElementById('password-gate').classList.add('hidden');
+      document.getElementById('site-content').classList.add('unlocked');
+    } else {
+      input.classList.add('error');
+      document.getElementById('pw-error').style.display = 'block';
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  // Navbar scroll effect
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // Scroll-triggered fade-up animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Form submission handler
+  function handleSubmit(e) {
+    e.preventDefault();
+    const form = document.getElementById('stakeholder-form');
+    const success = document.getElementById('form-success');
+    // Collect form data (ready to wire up to a backend)
+    const data = Object.fromEntries(new FormData(form));
+    data.contact_ok = document.getElementById('contact-ok').checked;
+    console.log('Form submission:', data);
+    // Show success message
+    form.style.display = 'none';
+    success.style.display = 'block';
+  }
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelector('.nav-links')?.classList.remove('open');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
