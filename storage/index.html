@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cold Storage &amp; Warehousing — FOOD Center Subsector Profile</title>
+  <link rel="icon" type="image/png" href="../logo/logo_final.png">
+  <script>
+    if (sessionStorage.getItem('food_auth') !== 'true') {
+      window.location.href = '../index.html';
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green-dark: #1a3a2a;
+      --green-mid: #2d6a4f;
+      --green-light: #52b788;
+      --green-pale: #d8f3dc;
+      --gold: #b68d40;
+      --gold-light: #f5e6c8;
+      --navy: #1b2a4a;
+      --slate: #4a5568;
+      --light-bg: #f8faf9;
+      --white: #ffffff;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #2d3748; line-height: 1.7; background: var(--white);
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06); transition: box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0.75rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-left { display: flex; align-items: center; gap: 1rem; }
+    .nav-back {
+      text-decoration: none; color: var(--green-mid); font-size: 0.85rem;
+      font-weight: 600; white-space: nowrap; transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--green-dark); }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo img { height: 44px; }
+    .nav-logo span { font-weight: 700; font-size: 1.1rem; color: var(--green-dark); letter-spacing: -0.02em; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: var(--slate); font-size: 0.85rem;
+      font-weight: 500; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--green-mid); }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--green-dark); margin: 5px 0; transition: 0.3s; }
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none; position: absolute; top: 100%; left: 0; right: 0;
+        background: white; flex-direction: column; padding: 1rem 2rem; gap: 1rem;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+      }
+      .nav-links.open { display: flex; }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative; min-height: 100vh; display: flex;
+      align-items: center; justify-content: center; overflow: hidden; padding-top: 70px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(135deg, #0f2419 0%, #1b2a4a 60%, #2d6a4f 100%);
+    }
+    /* Subtle grid pattern overlay */
+    .hero-bg::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    .hero-content {
+      position: relative; z-index: 1; text-align: center;
+      max-width: 1100px; padding: 2rem; width: 100%;
+    }
+    .hero-eyebrow {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      color: white; line-height: 1.15; margin-bottom: 0.75rem;
+    }
+    .hero-subtitle {
+      font-size: 1rem; color: rgba(255,255,255,0.8); margin-bottom: 0.5rem; line-height: 1.6;
+    }
+    .hero-breadcrumb { display: inline-block; margin-bottom: 2rem; }
+    .hero-breadcrumb a {
+      color: var(--green-pale); text-decoration: none; font-size: 0.9rem;
+      font-weight: 500; transition: color 0.2s;
+    }
+    .hero-breadcrumb a:hover { color: white; }
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+      max-width: 900px; margin: 0 auto;
+    }
+    .kpi-card {
+      background: rgba(255,255,255,0.12); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 1.5rem;
+      text-align: center;
+    }
+    .kpi-value {
+      font-family: 'Playfair Display', serif; font-size: 1.8rem;
+      color: var(--gold); font-weight: 700; margin-bottom: 0.25rem;
+    }
+    .kpi-label { font-size: 0.85rem; color: white; font-weight: 500; margin-bottom: 0.2rem; }
+    .kpi-source { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+    @media (max-width: 768px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .kpi-grid { grid-template-columns: 1fr; } .kpi-value { font-size: 1.4rem; } }
+
+    /* SECTIONS */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-header { text-align: center; max-width: 700px; margin: 0 auto 3rem; }
+    .section-label {
+      display: inline-block; font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--green-mid); margin-bottom: 0.75rem;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      color: var(--green-dark); margin-bottom: 1rem; line-height: 1.2;
+    }
+    .section-header p { font-size: 1.05rem; color: var(--slate); line-height: 1.8; }
+    .green-underline { width: 60px; height: 3px; background: var(--green-light); margin: 0 auto; border-radius: 2px; }
+
+    /* QUICK STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--light-bg); border-radius: 12px; padding: 1.25rem; text-align: center; border: 1px solid #e8efe8; }
+    .stat-card .val { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--green-dark); font-weight: 700; }
+    .stat-card .lbl { font-size: 0.82rem; color: var(--slate); margin-top: 0.25rem; }
+    @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    /* CHALLENGE TABLE */
+    .challenges-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    .challenges-table th { background: var(--green-dark); color: white; padding: 0.75rem 1rem; text-align: left; font-size: 0.88rem; }
+    .challenges-table td { padding: 0.75rem 1rem; border-bottom: 1px solid #e8efe8; font-size: 0.88rem; color: var(--slate); vertical-align: top; }
+    .challenges-table tr { cursor: pointer; transition: background 0.2s; }
+    .challenges-table tr:hover td { background: var(--light-bg); }
+    .severity-badge {
+      display: inline-block; padding: 0.2rem 0.7rem; border-radius: 50px;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    }
+    .severity-critical { background: #fed7d7; color: #c53030; }
+    .severity-high { background: #fefcbf; color: #975a16; }
+    .severity-medium { background: #c6f6d5; color: #276749; }
+    .challenge-detail {
+      display: none; padding: 0.75rem 1rem; background: var(--light-bg);
+      font-size: 0.85rem; color: var(--slate); line-height: 1.7;
+    }
+    .challenge-detail.open { display: table-row; }
+
+    /* CALLOUT */
+    .callout {
+      background: linear-gradient(135deg, var(--green-pale), var(--gold-light));
+      padding: 1.25rem 1.5rem; border-radius: 10px;
+      border-left: 4px solid var(--gold); font-size: 0.95rem;
+      color: var(--green-dark); line-height: 1.7; margin: 1.5rem 0;
+    }
+    .callout-gold {
+      background: var(--gold-light); border-left: 4px solid var(--gold);
+      padding: 1.25rem 1.5rem; border-radius: 10px; margin: 1.5rem 0;
+    }
+    .callout-gold p { font-size: 0.95rem; color: var(--green-dark); line-height: 1.7; }
+
+    /* DASHBOARD */
+    .dashboard-section { background: var(--light-bg); }
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .chart-card {
+      background: white; border-radius: 16px; padding: 2rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06); overflow: hidden;
+    }
+    .chart-card.full { grid-column: 1 / -1; }
+    .chart-card h3 { font-size: 1.1rem; color: var(--green-dark); margin-bottom: 0.25rem; }
+    .chart-card .chart-subtitle { font-size: 0.82rem; color: var(--slate); margin-bottom: 1rem; }
+    .chart-card .chart-source { font-size: 0.72rem; color: #a0aec0; margin-top: 0.75rem; }
+    .chart-wrap { position: relative; width: 100%; }
+    .chart-wrap canvas { width: 100% !important; }
+    @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
+
+    /* ACCORDION */
+    .accordion { max-width: 900px; margin: 0 auto; }
+    .accordion-item { margin-bottom: 0.5rem; border-radius: 12px; overflow: hidden; border: 1px solid #e8efe8; }
+    .accordion-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.25rem 1.5rem; cursor: pointer; background: var(--light-bg);
+      font-weight: 600; font-size: 1rem; color: var(--green-dark);
+      transition: background 0.3s, color 0.3s; user-select: none;
+    }
+    .accordion-header:hover { background: var(--green-pale); }
+    .accordion-header.active { background: var(--green-dark); color: white; }
+    .accordion-header .toggle { font-size: 1.3rem; transition: transform 0.3s; }
+    .accordion-header.active .toggle { transform: rotate(45deg); }
+    .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: white; }
+    .accordion-body { padding: 1.5rem; font-size: 0.95rem; color: var(--slate); line-height: 1.8; }
+    .accordion-body p { margin-bottom: 1rem; }
+    .accordion-body ul, .accordion-body ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    .accordion-body li { margin-bottom: 0.4rem; }
+    .pull-quote {
+      background: var(--gold-light); border-left: 4px solid var(--gold);
+      padding: 1rem 1.25rem; border-radius: 8px; margin: 1rem 0;
+      font-style: italic; font-size: 0.92rem; color: var(--green-dark); line-height: 1.7;
+    }
+
+    /* TRL */
+    .trl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .trl-column { border-radius: 16px; overflow: hidden; background: white; border: 1px solid #e8efe8; }
+    .trl-header { padding: 1.25rem 1.5rem; color: white; font-weight: 700; font-size: 1rem; }
+    .trl-header.commercial { background: var(--green-dark); }
+    .trl-header.rd { background: var(--green-mid); }
+    .trl-header.emerging { background: var(--navy); }
+    .trl-header small { display: block; font-size: 0.75rem; font-weight: 400; opacity: 0.8; margin-top: 0.25rem; }
+    .trl-list { padding: 1.25rem; }
+    .trl-item {
+      padding: 1rem; margin-bottom: 0.75rem; background: var(--light-bg);
+      border-radius: 10px; border-left: 3px solid transparent;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .trl-item:hover { transform: translateX(4px); }
+    .trl-column:nth-child(1) .trl-item:hover { border-left-color: var(--green-dark); }
+    .trl-column:nth-child(2) .trl-item:hover { border-left-color: var(--green-mid); }
+    .trl-column:nth-child(3) .trl-item:hover { border-left-color: var(--navy); }
+    .trl-item h4 { font-size: 0.92rem; color: var(--green-dark); margin-bottom: 0.35rem; }
+    .trl-item p { font-size: 0.82rem; color: var(--slate); line-height: 1.6; }
+    @media (max-width: 900px) { .trl-grid { grid-template-columns: 1fr; } }
+
+    /* FOOTER */
+    footer { background: #0f1f17; color: rgba(255,255,255,0.6); padding: 3rem 2rem; }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto; display: flex;
+      justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo { display: flex; align-items: center; gap: 0.75rem; }
+    .footer-logo img { height: 36px; opacity: 0.8; }
+    .footer-logo span { font-weight: 600; color: rgba(255,255,255,0.8); font-size: 0.95rem; }
+    .footer-text { font-size: 0.85rem; }
+    .footer-text a { color: var(--green-light); text-decoration: none; }
+    .footer-text a:hover { text-decoration: underline; }
+
+    /* ANIMATIONS */
+    .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-back">&larr; FOOD Center</a>
+      <a href="../index.html" class="nav-logo">
+        <img src="../logo/logo_final.png" alt="FOOD Center Logo">
+        <span>FOOD Center</span>
+      </a>
+    </div>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="#highlights">Highlights</a></li>
+      <li><a href="#dashboard">Data</a></li>
+      <li><a href="#sector-profile">Sector Profile</a></li>
+      <li><a href="#solutions">Solutions</a></li>
+      <li><a href="../index.html#get-involved">Get Involved</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">FOOD Center &mdash; Subsector Profile</div>
+    <h1>Cold Storage &amp; Warehousing</h1>
+    <p class="hero-subtitle">Refrigerated Warehousing, On-Farm Storage &amp; Cold Chain Infrastructure | NAICS 493, 4931, 4932</p>
+    <div class="hero-breadcrumb"><a href="../index.html">&larr; Back to FOOD Center</a></div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="931" data-comma="true">0</div>
+        <div class="kpi-label">Refrigerated Facilities</div>
+        <div class="kpi-source">USDA NASS Feb 2026</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="3.99" data-suffix="B ft&sup3;">0</div>
+        <div class="kpi-label">Gross Capacity (3.25B ft&sup3; usable)</div>
+        <div class="kpi-source">USDA NASS Feb 2026</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="43.2" data-prefix="$" data-suffix="B">$0</div>
+        <div class="kpi-label">U.S. Cold Storage Market (2024)</div>
+        <div class="kpi-source">&rarr; $127.7B by 2033</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="85.3" data-suffix=" kBtu/ft&sup2;/yr">0</div>
+        <div class="kpi-label">Electricity EUI</div>
+        <div class="kpi-source">4&ndash;5&times; avg warehouse | NREL</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="37" data-suffix="&ndash;42 yrs">0</div>
+        <div class="kpi-label">Avg Facility Age</div>
+        <div class="kpi-source">&gt;78% built before 2000</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="15" data-suffix="&times;">0</div>
+        <div class="kpi-label">Performance Gap</div>
+        <div class="kpi-source">26 to 379 kWh/m&sup3;/yr</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEY HIGHLIGHTS -->
+<section id="highlights">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">At a Glance</div>
+      <h2>Key Highlights</h2>
+      <div class="green-underline"></div>
+    </div>
+
+    <div class="fade-up">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="val">931</div><div class="lbl">Facilities</div></div>
+        <div class="stat-card"><div class="val">3.99B ft&sup3;</div><div class="lbl">Gross Capacity</div></div>
+        <div class="stat-card"><div class="val">$7.5B</div><div class="lbl">Gross Output</div></div>
+        <div class="stat-card"><div class="val">85.3</div><div class="lbl">kBtu/ft&sup2;/yr EUI</div></div>
+        <div class="stat-card"><div class="val">60&ndash;80%</div><div class="lbl">Electricity &rarr; Refrigeration</div></div>
+        <div class="stat-card"><div class="val">73,900</div><div class="lbl">Workers</div></div>
+      </div>
+
+      <h3 style="font-size:1.05rem; color:var(--green-dark); margin:1.5rem 0 1rem;">Key Challenges</h3>
+      <div style="overflow-x:auto;">
+        <table class="challenges-table" id="challenges-table">
+          <thead><tr><th>Challenge</th><th>Severity</th></tr></thead>
+          <tbody>
+            <tr class="challenge-row" data-detail="Refrigeration systems consume 60&ndash;80% of total facility electricity. Peak demand charges can exceed $15K&ndash;$50K+/month. Load factor optimization and thermal energy storage are critical paths.">
+              <td>High &amp; Peaky Electricity (Refrigeration-Dominated)</td>
+              <td><span class="severity-badge severity-critical">Critical</span></td>
+            </tr>
+            <tr class="challenge-row" data-detail="EPA AIM Act mandates 85% HFC reduction by 2036. GWP &le; 300 required for new equipment from 2025. R-404A (GWP 3,922) must be replaced. Ammonia and CO&#8322; systems are alternatives but require capital investment.">
+              <td>Refrigerant Transition &mdash; AIM Act HFC Phasedown</td>
+              <td><span class="severity-badge severity-critical">Critical</span></td>
+            </tr>
+            <tr class="challenge-row" data-detail="78%+ of facilities built before 2000. Average age 37&ndash;42 years. Insulation degradation, legacy ammonia piping, and outdated controls create a 15&times; performance gap between best and worst performers.">
+              <td>Aging Infrastructure &amp; Construction Gap</td>
+              <td><span class="severity-badge severity-high">High</span></td>
+            </tr>
+            <tr class="challenge-row" data-detail="~30&ndash;40% of food supply is lost or wasted. Cold chain breaks — particularly at handoff points — are a major contributor. Rural and underserved communities in 21 states face cold chain network deficits.">
+              <td>Food Loss &amp; Cold Chain Gaps</td>
+              <td><span class="severity-badge severity-high">High</span></td>
+            </tr>
+            <tr class="challenge-row" data-detail="Sub-zero environments deter workers. Turnover exceeds 40% annually. Full AS/RS automation costs $30&ndash;80M — prohibitive for mid-size operators. Robotics-as-a-Service models are emerging.">
+              <td>Labor Shortages &amp; Automation Barriers</td>
+              <td><span class="severity-badge severity-high">High</span></td>
+            </tr>
+            <tr class="challenge-row" data-detail="FSMA 204 requires end-to-end digital traceability for high-risk foods. Enforcement extended to July 2028 due to widespread unreadiness. IoT integration costs are prohibitive for small/mid operators.">
+              <td>FSMA 204 Digital Traceability Mandate</td>
+              <td><span class="severity-badge severity-medium">Medium</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout-gold">
+        <p><strong>Lineage + Americold = ~70%</strong> of North American public refrigerated warehouse capacity, up from 61% in 2019.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA DASHBOARD -->
+<section class="dashboard-section" id="dashboard">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">Data Dashboard</div>
+      <h2>Cold Storage Data Explorer</h2>
+      <div class="green-underline"></div>
+    </div>
+
+    <div class="chart-grid">
+      <!-- Chart 1: Energy Donut -->
+      <div class="chart-card fade-up">
+        <h3>Cold Storage Electricity Use Breakdown</h3>
+        <p class="chart-subtitle">Refrigeration systems dominate energy consumption &mdash; primary target for efficiency R&amp;D</p>
+        <div class="chart-wrap" style="height:320px;">
+          <canvas id="energy-donut"></canvas>
+        </div>
+        <p class="chart-source">Source: NREL OSTI-83583; LBNL DRQAT-RW</p>
+      </div>
+
+      <!-- Chart 2: EUI Comparison -->
+      <div class="chart-card fade-up">
+        <h3>Energy Use Intensity by Building Type (kBtu/ft&sup2;/yr)</h3>
+        <p class="chart-subtitle">Cold storage facilities consume 4&ndash;5&times; the energy of average commercial buildings</p>
+        <div class="chart-wrap" style="height:340px;">
+          <canvas id="eui-bar"></canvas>
+        </div>
+        <p class="chart-source">Source: Cold storage: NREL OSTI-83583; Others: EIA CBECS 2018. Order-of-magnitude comparison.</p>
+      </div>
+
+      <!-- Chart 3: Market Growth -->
+      <div class="chart-card full fade-up">
+        <h3>U.S. Cold Storage Market Growth ($B, CAGR 12.8%)</h3>
+        <p class="chart-subtitle">Projected growth from $43.2B (2024) to $127.7B (2033)</p>
+        <div class="chart-wrap" style="height:300px;">
+          <canvas id="market-area"></canvas>
+        </div>
+        <p class="chart-source">Source: Industry analysis; CAGR 12.8% projection</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTOR PROFILE -->
+<section id="sector-profile">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">Deep Dive</div>
+      <h2>Sector Profile</h2>
+      <p>Comprehensive pre-interview research findings</p>
+      <div class="green-underline"></div>
+    </div>
+
+    <div class="accordion fade-up">
+      <div class="accordion-item">
+        <div class="accordion-header active"><span>1. Executive Summary</span><span class="toggle">+</span></div>
+        <div class="accordion-content" style="max-height:2000px;">
+          <div class="accordion-body">
+            <div class="pull-quote">"Cold storage and warehousing infrastructure underpins food security for over 330 million Americans &mdash; facilities consume more than 528 trillion BTU annually."</div>
+            <p>The U.S. cold storage and warehousing sector comprises 931 refrigerated warehouse facilities with 3.99 billion cubic feet of gross capacity (3.25 billion usable), serving as the critical infrastructure backbone for temperature-sensitive food distribution. The sector generated approximately $7.5 billion in gross output and employed 73,900 workers.</p>
+            <p>Cold storage is among the most energy-intensive commercial building types, with an electricity EUI of 85.3 kBtu/ft&sup2;/yr &mdash; 4&ndash;5 times that of a standard warehouse. Refrigeration systems consume 60&ndash;80% of total facility electricity. The sector faces a convergence of regulatory, technological, and market pressures: the EPA AIM Act mandates an 85% reduction in HFC consumption by 2036; 78% of facilities were built before 2000; and a 15-fold performance gap between best and worst performers signals massive efficiency opportunity.</p>
+            <p>The market is projected to grow from $43.2 billion (2024) to $127.7 billion by 2033 at a 12.8% CAGR, driven by e-commerce grocery, pharmaceutical cold chain demand, and increasing consumer expectations for fresh food delivery.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>2. Products &amp; Services (NAICS Coverage)</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>The cold storage sector spans several NAICS codes: <strong>493120</strong> (Refrigerated Warehousing and Storage), <strong>493110</strong> (General Warehousing and Storage &mdash; when temperature-controlled), and portions of <strong>493130</strong> (Farm Product Warehousing and Storage).</p>
+          <p>Services include: blast freezing, tempering, controlled atmosphere storage, cross-docking, pick-and-pack operations, customs bonded storage, and cold chain logistics management. Facilities range from small on-farm coolers to million-square-foot automated distribution centers operating at temperatures from &minus;25&deg;C (deep freeze) to +4&deg;C (fresh/chill).</p>
+          <p>Key product categories stored include: frozen meats and poultry, dairy products, frozen fruits and vegetables, ice cream, seafood, pharmaceuticals, and fresh produce requiring controlled atmosphere environments.</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>3. Leading Producers</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <div class="pull-quote">"Lineage + Americold together represent approximately 70% of North American public refrigerated warehouse capacity, up from 61% in 2019."</div>
+          <p>The public refrigerated warehouse market is highly concentrated:</p>
+          <ul>
+            <li><strong>Lineage Logistics:</strong> 2.96 billion cubic feet; 480+ facilities globally; completed $4.4&ndash;5.1B IPO (the largest real estate IPO in history). Vertically integrated with transportation and technology platforms.</li>
+            <li><strong>Americold Realty Trust (NYSE: COLD):</strong> 1.49 billion cubic feet; publicly traded REIT. Leading investor in automated high-rise freezer facilities.</li>
+            <li><strong>United States Cold Storage (USCS):</strong> Top-5 North American operator; 40+ locations; privately held. Strong presence in Southeast and Mid-Atlantic.</li>
+            <li><strong>NewCold:</strong> European-origin operator specializing in high-automation greenfield construction. Deploys automated storage and retrieval systems (AS/RS) rated to &minus;25&deg;C.</li>
+          </ul>
+          <p>The top two operators' combined market share has grown from 61% to approximately 70% of North American public capacity since 2019, reflecting ongoing consolidation driven by scale advantages in energy management, automation, and customer logistics integration.</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>4. Production Processes</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>Cold storage operations center on maintaining precise temperature conditions through industrial refrigeration systems. Key processes include:</p>
+          <ul>
+            <li><strong>Refrigeration:</strong> Industrial ammonia (R-717) or HFC/HFO-based systems with compressors, condensers, evaporators, and expansion devices. Two-stage compression is standard for deep-freeze applications.</li>
+            <li><strong>Blast freezing:</strong> Rapid temperature reduction of incoming product using high-velocity cold air circulation. Critical for preserving food quality and meeting customer specifications.</li>
+            <li><strong>Controlled atmosphere storage:</strong> Manipulation of O&#8322;, CO&#8322;, and N&#8322; concentrations to extend produce shelf life. Used primarily for apples, pears, and kiwifruit.</li>
+            <li><strong>Inventory management:</strong> Warehouse management systems (WMS) coordinate inbound/outbound logistics, storage assignment, and order fulfillment. Automated facilities use AS/RS with crane and shuttle systems.</li>
+            <li><strong>Dock operations:</strong> Loading/unloading with temperature-controlled dock seals and shelters to minimize cold chain breaks during product transfer.</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>5. Supply &amp; Demand</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p><strong>Demand drivers:</strong> E-commerce grocery (accelerated post-COVID), pharmaceutical cold chain requirements, increased consumer demand for fresh and frozen foods, and growing international food trade.</p>
+          <p><strong>Supply constraints:</strong> New cold storage construction takes 18&ndash;36 months and costs $250&ndash;400+ per square foot &mdash; significantly more than dry warehouse construction ($100&ndash;150/ft&sup2;). Land use restrictions, utility capacity requirements, and ammonia safety regulations create additional barriers to new construction.</p>
+          <p><strong>Capacity utilization:</strong> Public refrigerated warehouses operate at approximately 75&ndash;85% utilization. Seasonal peaks (holiday food production, harvest periods) can push utilization above 95%, creating bottlenecks and driving demand for overflow capacity.</p>
+          <p>Rural and underserved communities in 21 states face cold chain network deficits that compound food loss and food insecurity. These "cold chain deserts" represent both a market opportunity and a public policy challenge.</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>6. Change Drivers</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <ul>
+            <li><strong>HFC phasedown (AIM Act):</strong> The single largest regulatory driver. GWP &le; 300 required for new equipment from 2025. R-404A (GWP 3,922) must be replaced across all existing systems by 2036. Natural refrigerants (ammonia, CO&#8322;) are the primary alternatives.</li>
+            <li><strong>Energy costs:</strong> Electricity represents 35&ndash;50% of operating expenses for cold storage facilities. Demand charge management is critical &mdash; peak demand from defrost cycles and compressor staging can create bills of $15K&ndash;$50K+/month.</li>
+            <li><strong>Automation:</strong> Labor challenges (40%+ turnover in sub-zero environments) are driving investment in AS/RS, autonomous mobile robots (AMRs), and automated pick-and-pack systems. Full automation reduces labor needs by 60&ndash;80% but costs $30&ndash;80M per facility.</li>
+            <li><strong>FSMA 204 traceability:</strong> FDA's Food Traceability Rule requires end-to-end digital chain-of-custody for high-risk foods. Enforcement extended to July 2028 due to industry unreadiness. Requires IoT sensor networks and digital integration across the cold chain.</li>
+            <li><strong>E-commerce and last-mile:</strong> Direct-to-consumer cold delivery (e.g., Instacart, Amazon Fresh) is reshaping cold chain topology toward smaller, urban-proximate distribution facilities.</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>7. Technologies, Inputs &amp; Byproducts</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p><strong>Refrigeration technologies:</strong> Industrial ammonia (R-717, COP 2.5&ndash;4.0, zero GWP), transcritical CO&#8322; (R-744), cascade systems (CO&#8322;/ammonia), and low-charge ammonia packaged units for medium-size facilities.</p>
+          <div class="pull-quote">"Thermal energy storage at $1,000/kW and under 2&cent;/kWh levelized cost &mdash; already cost-competitive &mdash; represents 65 GW of untapped demand flexibility across the cold chain."</div>
+          <p><strong>Energy management:</strong> Evaporator fan VFDs, floating head/suction pressure controls, LED lighting (reduces both lighting energy and cooling load), thermal energy storage (ice/eutectic systems for demand response), and AI-driven optimization of compressor staging and defrost cycles.</p>
+          <p><strong>Automation:</strong> Automated storage and retrieval systems (AS/RS), autonomous mobile robots (AMRs), goods-to-person picking systems, and robotic palletizing. NewCold and Americold are leaders in high-bay automated freezer construction.</p>
+          <p><strong>Waste heat recovery:</strong> Heat rejected by refrigeration condensers can be captured for office heating, dock snow melt, and sanitation hot water. Typical payback: 2&ndash;4 years in cold climates.</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>8. Key Players &amp; Stakeholder Landscape</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p><strong>Operators:</strong> Lineage Logistics, Americold, USCS, NewCold, Preferred Freezer Services, Nordic Logistics, VersaCold (Canada).</p>
+          <p><strong>Equipment/OEM:</strong> Emerson (Copeland compressors), Johnson Controls (York/Frick), GEA Group, Mayekawa (Mycom), Bitzer, Evapco (condensers/evaporators), NIBE/Alfa Laval.</p>
+          <p><strong>Automation vendors:</strong> Dematic (KION Group), Swisslog, SSI SCHAEFER, AutoStore, Locus Robotics, 6 River Systems (Ocado).</p>
+          <p><strong>Trade associations:</strong> Global Cold Chain Alliance (GCCA), International Association of Refrigerated Warehouses (IARW), Refrigerating Engineers & Technicians Association (RETA), ASHRAE.</p>
+          <p><strong>Federal/regulatory:</strong> EPA (AIM Act, SNAP), FDA (FSMA 204), DOE (EERE, BTO), USDA (NASS Cold Storage Report, AMS).</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>9. Energy &amp; Technology Challenges</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <ul>
+            <li><strong>Refrigeration system efficiency:</strong> The 15&times; performance gap (26 to 379 kWh/m&sup3;/yr) signals enormous efficiency potential. Best-practice facilities use floating pressure controls, VFDs on all motors, LED lighting, and optimized defrost schedules.</li>
+            <li><strong>Demand charge management:</strong> Peak electricity demand from compressor cycling, defrost operations, and blast freezing drives disproportionate utility costs. Thermal energy storage and load-shifting strategies can reduce demand charges 20&ndash;40%.</li>
+            <li><strong>Refrigerant transition:</strong> Moving from R-404A (GWP 3,922) to low-GWP alternatives requires system redesign. Ammonia systems have safety requirements (process safety management); CO&#8322; systems face performance challenges in warm climates (COP drops above 30&deg;C ambient).</li>
+            <li><strong>Building envelope:</strong> Insulation degradation in aging facilities increases energy consumption by 15&ndash;30% over 20+ years. Vapor barrier failures cause ice formation in walls and roof structures, compounding heat gain.</li>
+            <li><strong>Submetering gap:</strong> The #1 cited barrier to efficiency is lack of energy submetering. Most facilities meter total building consumption but cannot attribute energy use to individual systems, zones, or processes.</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>10. Competitivity &amp; Market Structure</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>The cold storage market is consolidating rapidly. The top two operators (Lineage + Americold) control approximately 70% of public capacity. This concentration creates both scale advantages (energy procurement, technology investment, customer logistics integration) and market access challenges for smaller operators.</p>
+          <div class="pull-quote">"Rural and underserved communities in 21 states face cold chain network deficits that compound food loss and food insecurity."</div>
+          <p><strong>New construction economics:</strong> Greenfield cold storage costs $250&ndash;400+/ft&sup2;, compared to $100&ndash;150/ft&sup2; for dry warehouses. The premium reflects insulation, vapor barriers, industrial refrigeration, and reinforced flooring for automated systems. Construction timelines of 18&ndash;36 months create market entry barriers.</p>
+          <p><strong>Operating margins:</strong> Public cold storage companies typically operate at 15&ndash;25% EBITDA margins, with energy costs representing the single largest controllable expense. Facilities that invest in efficiency (VFDs, LED, controls optimization) achieve 20&ndash;40% energy cost reductions.</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>11. Outlook</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>The cold storage sector is entering a period of rapid transformation driven by regulatory mandates, market growth, and technology adoption:</p>
+          <ul>
+            <li><strong>Market growth:</strong> $43.2B (2024) &rarr; $127.7B (2033) at 12.8% CAGR. Pharmaceutical and e-commerce cold chain are the fastest-growing segments.</li>
+            <li><strong>Refrigerant transition:</strong> The AIM Act phasedown will force system-wide refrigerant changes by 2036. Early adopters of ammonia and CO&#8322; systems will gain cost and compliance advantages.</li>
+            <li><strong>Automation wave:</strong> AS/RS and AMR deployment will accelerate as labor costs rise and technology costs decline. Robotics-as-a-Service (RaaS) models will make automation accessible to mid-size operators.</li>
+            <li><strong>Thermal energy storage:</strong> At $1,000/kW and &lt;2&cent;/kWh levelized cost, thermal storage is already cost-competitive for demand charge management. Widespread deployment could unlock 65 GW of demand flexibility across the cold chain.</li>
+            <li><strong>Digital traceability:</strong> FSMA 204 compliance will drive IoT sensor deployment throughout the cold chain, creating new data streams for energy optimization and food safety.</li>
+            <li><strong>Rural cold chain development:</strong> Federal and state programs may target the 21 states with cold chain deficits, creating market opportunities for modular, energy-efficient cold storage solutions.</li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTIONS -->
+<section id="solutions" style="background: var(--light-bg);">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">Solutions Landscape</div>
+      <h2>Technology Readiness Level Framework</h2>
+      <div class="green-underline"></div>
+    </div>
+
+    <div class="trl-grid fade-up">
+      <div class="trl-column">
+        <div class="trl-header commercial">TRL 8&ndash;10: Commercial<small>Existing &amp; Deployable</small></div>
+        <div class="trl-list">
+          <div class="trl-item">
+            <h4>Evaporator Fan VFDs &amp; Staging</h4>
+            <p>20&ndash;50% fan energy savings. Simple retrofit with 1&ndash;3 year payback on most facilities.</p>
+          </div>
+          <div class="trl-item">
+            <h4>LED Lighting Replacement</h4>
+            <p>75&ndash;80% lighting energy savings. Also reduces cooling load by eliminating heat from legacy fixtures.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Floating Head/Suction Pressure Control</h4>
+            <p>5&ndash;15% compressor energy reduction by dynamically adjusting pressures to ambient conditions.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Submetering &amp; Energy Management</h4>
+            <p>#1 cited efficiency barrier: lack of metering. System-level submetering enables targeted optimization.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Ammonia (R-717) Industrial Refrigeration</h4>
+            <p>Zero GWP; COP 2.5&ndash;4.0. Industry standard for large facilities. Process safety management required.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Thermal Precooling / Demand Response</h4>
+            <p>Load shifting using thermal mass. Pre-cool facility before peak demand periods to reduce demand charges.</p>
+          </div>
+        </div>
+      </div>
+      <div class="trl-column">
+        <div class="trl-header rd">TRL 5&ndash;7: R&amp;D / Early Commercial<small>Pilot &amp; Demonstration Stage</small></div>
+        <div class="trl-list">
+          <div class="trl-item">
+            <h4>Transcritical CO&#8322; Refrigeration</h4>
+            <p>Warm-climate performance improvement needed. COP drops above 30&deg;C ambient. Promising for moderate climates.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Low-Charge Ammonia Packaged Systems</h4>
+            <p>Bringing ammonia efficiency to medium-size facilities without full industrial safety infrastructure.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Dynamic Controlled Atmosphere (DCA)</h4>
+            <p>RQ/chlorophyll fluorescence sensors. 6% U.S. adoption vs. 30&ndash;40% in Europe &mdash; technology transfer opportunity.</p>
+          </div>
+          <div class="trl-item">
+            <h4>AI-Driven Warehouse Management</h4>
+            <p>Automated inventory routing, predictive maintenance, and energy optimization via machine learning.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Robotics-as-a-Service (RaaS)</h4>
+            <p>Avoids $30&ndash;80M CAPEX threshold for mid/small operators. Subscription-based automation deployment.</p>
+          </div>
+        </div>
+      </div>
+      <div class="trl-column">
+        <div class="trl-header emerging">TRL 0&ndash;4: Emerging<small>Pre-Commercial &amp; Research</small></div>
+        <div class="trl-list">
+          <div class="trl-item">
+            <h4>Combination Grain Drying</h4>
+            <p>High-temp + natural air finishing. ~50% energy savings vs. conventional crossflow drying.</p>
+          </div>
+          <div class="trl-item">
+            <h4>FSMA 204 IoT Integration Stack</h4>
+            <p>End-to-end digital traceability for small/mid-size cold chain operators. Cost-effective sensor/software bundles.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Rural Cold Chain Micro-Hubs</h4>
+            <p>Modular, energy-efficient cold storage for 21 states with cold chain deficits. Addresses food loss and food insecurity.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Next-Gen Refrigerants Beyond HFOs</h4>
+            <p>PFAS concerns with current HFO options may require further refrigerant innovation beyond the AIM Act transition.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <img src="../logo/logo_final.png" alt="FOOD Center">
+      <span>FOOD Center</span>
+    </div>
+    <div class="footer-text">
+      Food &amp; Beverage Operational Optimization and Deployment Center<br>
+      <a href="https://www.lbl.gov" target="_blank" rel="noopener">Lawrence Berkeley National Laboratory</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── NAV SCROLL ──
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 20); });
+
+// ── SMOOTH SCROLL ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelector('.nav-links')?.classList.remove('open');
+    }
+  });
+});
+
+// ── FADE-UP ──
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+// ── KPI COUNTERS ──
+function countUp(el, target, prefix, suffix, duration, useComma) {
+  const start = performance.now();
+  const isDecimal = target % 1 !== 0;
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    let current = target * eased;
+    let display = isDecimal ? current.toFixed(1) : Math.round(current).toString();
+    if (useComma) display = Number(display).toLocaleString('en-US');
+    el.textContent = (prefix || '') + display + (suffix || '');
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+const kpiObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !entry.target.dataset.animated) {
+      entry.target.dataset.animated = 'true';
+      const el = entry.target;
+      countUp(el, parseFloat(el.dataset.target), el.dataset.prefix||'', el.dataset.suffix||'', 1800, el.dataset.comma==='true');
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.kpi-value').forEach(el => kpiObserver.observe(el));
+
+// ── CHALLENGE ROW EXPAND ──
+document.querySelectorAll('.challenge-row').forEach(row => {
+  row.addEventListener('click', () => {
+    const existing = row.nextElementSibling;
+    // Remove any open details
+    document.querySelectorAll('.challenge-detail-row').forEach(r => r.remove());
+    if (existing && existing.classList && existing.classList.contains('challenge-detail-row')) return;
+    const detail = document.createElement('tr');
+    detail.className = 'challenge-detail-row';
+    detail.innerHTML = '<td colspan="2" style="background:var(--light-bg);padding:1rem 1.5rem;font-size:0.85rem;color:var(--slate);line-height:1.7;border-left:3px solid var(--green-mid);">' + row.dataset.detail + '</td>';
+    row.after(detail);
+  });
+});
+
+// ── ACCORDION ──
+document.querySelectorAll('.accordion-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const content = header.nextElementSibling;
+    const isOpen = header.classList.contains('active');
+    document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
+    document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
+    if (!isOpen) {
+      content.style.maxHeight = content.scrollHeight + 'px';
+      header.classList.add('active');
+    }
+  });
+});
+
+// ── CHARTS ──
+Chart.register(ChartDataLabels);
+Chart.defaults.font.family = "'Inter', sans-serif";
+
+function initAllCharts() {
+  try {
+    new Chart(document.getElementById('energy-donut'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Refrigeration Systems', 'Lighting', 'HVAC (Non-Refrig)', 'Dock / Material Handling', 'Other'],
+        datasets: [{ data: [70, 12, 8, 6, 4], backgroundColor: ['#1a3a2a','#2d6a4f','#52b788','#b68d40','#d8f3dc'], borderWidth: 2, borderColor: '#fff' }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '55%',
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, usePointStyle: true } },
+          datalabels: { color: '#fff', font: { weight: 600, size: 12 }, formatter: function(v) { return v > 5 ? v+'%' : ''; } }
+        },
+        animation: { duration: 1200 }
+      }
+    });
+  } catch(e) { console.warn('energy-donut:', e); }
+
+  try {
+    new Chart(document.getElementById('eui-bar'), {
+      type: 'bar',
+      data: {
+        labels: ['Cold Storage', 'Hospital', 'Food Service', 'Retail Store', 'Office Building', 'Avg Commercial', 'Standard Warehouse'],
+        datasets: [{ data: [250, 175, 163, 74, 69, 57, 25], backgroundColor: ['#1a3a2a','#95d5b2','#95d5b2','#d8f3dc','#d8f3dc','#d8f3dc','#d8f3dc'], borderRadius: 6 }]
+      },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#2d3748', font: { weight: 600, size: 11 }, formatter: function(v) { return v; } } },
+        scales: { x: { display: false, max: 310 }, y: { grid: { display: false }, ticks: { font: { size: 11 } } } },
+        animation: { duration: 1200 }
+      }
+    });
+  } catch(e) { console.warn('eui-bar:', e); }
+
+  try {
+    new Chart(document.getElementById('market-area'), {
+      type: 'line',
+      data: {
+        labels: ['2024','2025','2026','2027','2028','2029','2030','2031','2032','2033'],
+        datasets: [{
+          data: [43.2,48.7,55.0,62.0,70.0,79.0,89.1,100.5,113.3,127.7],
+          borderColor: '#2d6a4f', backgroundColor: 'rgba(45,106,79,0.15)',
+          fill: true, tension: 0.3, borderWidth: 3,
+          pointRadius: 4, pointBackgroundColor: '#2d6a4f',
+          pointBorderColor: '#fff', pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, datalabels: { color: '#1a3a2a', font: { weight: 600, size: 10 }, anchor: 'end', align: 'top', offset: 4, formatter: function(v,ctx) { var i=ctx.dataIndex; return (i===0||i===2||i===9) ? '$'+v+'B' : ''; } } },
+        scales: {
+          y: { min: 30, ticks: { callback: function(v) { return '$'+v+'B'; } }, grid: { color: 'rgba(0,0,0,0.05)' } },
+          x: { grid: { display: false }, ticks: { font: { weight: 500 } } }
+        },
+        animation: { duration: 1200 }
+      }
+    });
+  } catch(e) { console.warn('market-area:', e); }
+}
+
+setTimeout(initAllCharts, 300);
+</script>
+
+</body>
+</html>

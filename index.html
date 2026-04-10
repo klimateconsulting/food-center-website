@@ -94,6 +94,31 @@
     }
     .nav-cta:hover { background: var(--green-dark); }
 
+    /* Dropdown */
+    .nav-dropdown { position: relative; }
+    .nav-dropdown > a { cursor: pointer; }
+    .nav-dropdown > a::after { content: ' \25BE'; font-size: 0.7em; }
+    .dropdown-menu {
+      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      background: white; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      min-width: 240px; padding: 0.5rem 0; padding-top: 1rem; margin-top: 0; z-index: 1001;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: 6px; left: 50%;
+      width: 12px; height: 12px; background: white; border-left: 1px solid rgba(0,0,0,0.06);
+      border-top: 1px solid rgba(0,0,0,0.06); transform: translateX(-50%) rotate(45deg);
+    }
+    .nav-dropdown { padding-bottom: 0.5rem; margin-bottom: -0.5rem; }
+    .nav-dropdown:hover .dropdown-menu { display: block; }
+    .dropdown-menu a {
+      display: block; padding: 0.6rem 1.25rem; font-size: 0.85rem; color: var(--slate);
+      text-decoration: none; font-weight: 500; transition: background 0.15s, color 0.15s;
+    }
+    .dropdown-menu a:hover { background: var(--green-pale); color: var(--green-dark); }
+    .dropdown-menu a.active-link { color: var(--green-mid); font-weight: 600; }
+    .dropdown-menu .dropdown-divider { height: 1px; background: #e8efe8; margin: 0.25rem 0; }
+
     /* Mobile nav */
     .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
     .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--green-dark); margin: 5px 0; transition: 0.3s; }
@@ -112,6 +137,14 @@
         border-bottom: 1px solid rgba(0,0,0,0.06);
       }
       .nav-links.open { display: flex; }
+      .dropdown-menu {
+        position: static; transform: none; box-shadow: none; border: none;
+        margin-top: 0.25rem; padding-left: 1rem; background: var(--light-bg);
+        border-radius: 8px;
+      }
+      .dropdown-menu::before { display: none; }
+      .nav-dropdown:hover .dropdown-menu { display: none; }
+      .nav-dropdown.open .dropdown-menu { display: block; }
     }
 
     /* ── HERO ── */
@@ -328,6 +361,14 @@
     }
     .subsector-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
     .subsector-card:hover::before { opacity: 1; }
+    .subsector-card.linked { cursor: pointer; }
+    .subsector-card.linked:hover { transform: translateY(-6px); border-left: 3px solid var(--green-mid); }
+    .subsector-card .view-profile {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      margin-top: 1rem; font-size: 0.82rem; font-weight: 600;
+      color: var(--green-mid); text-decoration: none;
+    }
+    .subsector-card .view-profile:hover { color: var(--green-dark); }
     .subsector-icon {
       width: 52px; height: 52px;
       background: var(--green-pale);
@@ -738,7 +779,19 @@
     </button>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
-      <li><a href="#value-chain">Value Chain</a></li>
+      <li class="nav-dropdown" onclick="this.classList.toggle('open')">
+        <a href="#value-chain">Value Chain</a>
+        <div class="dropdown-menu">
+          <a href="#value-chain">Overview</a>
+          <div class="dropdown-divider"></div>
+          <a href="agriculture/index.html" class="active-link">Agriculture</a>
+          <a href="#">Food Processing</a>
+          <a href="storage/index.html" class="active-link">Transportation &amp; Storage</a>
+          <a href="#">Retail &amp; Distribution</a>
+          <a href="#">Byproducts &amp; Waste</a>
+          <a href="#">Crosscutting Technologies</a>
+        </div>
+      </li>
       <li><a href="#engagement">Engagement</a></li>
       <li><a href="#outputs">Outputs</a></li>
       <li><a href="#get-involved" class="nav-cta">Get Involved</a></li>
@@ -804,12 +857,13 @@
     </div>
 
     <div class="subsectors fade-up">
-      <div class="subsector-card">
+      <div class="subsector-card linked" onclick="window.location.href='agriculture/index.html'">
         <div class="subsector-icon">
           <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" color="#2d6a4f"><path d="M12 22c4-4 8-7.5 8-12a8 8 0 10-16 0c0 4.5 4 8 8 12z"/><path d="M12 2v10"/><path d="M8 6l4 4 4-4"/></svg>
         </div>
         <h3>Agriculture</h3>
         <p>Crop production, livestock, dairy, aquaculture, and related farm-level processes. Topics include precision agriculture, farm automation, robotics, water and land use productivity, and energy intensity on the farm.</p>
+        <a href="agriculture/index.html" class="view-profile">View Profile &rarr;</a>
       </div>
       <div class="subsector-card">
         <div class="subsector-icon">
@@ -818,12 +872,13 @@
         <h3>Food Processing</h3>
         <p>Industrial operations that transform raw agricultural inputs into food products. Key processes include drying, washing, heating, cooling, sterilization, fermentation, packaging, and refrigeration.</p>
       </div>
-      <div class="subsector-card">
+      <div class="subsector-card linked" onclick="window.location.href='storage/index.html'">
         <div class="subsector-icon">
           <svg width="28" height="28" fill="none" stroke="#2d6a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
         </div>
         <h3>Transportation &amp; Storage</h3>
         <p>Cross-cutting logistics that link every node of the value chain. Focus areas include warehouse energy performance, cold storage technology, and fleet-level cost-effectiveness in food transport.</p>
+        <a href="storage/index.html" class="view-profile">View Profile &rarr;</a>
       </div>
       <div class="subsector-card">
         <div class="subsector-icon">

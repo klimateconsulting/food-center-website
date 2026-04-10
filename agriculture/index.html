@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>U.S. Agriculture — FOOD Center Subsector Profile</title>
+  <link rel="icon" type="image/png" href="../logo/logo_final.png">
+  <script>
+    // Auth gate — redirect if not authenticated
+    if (sessionStorage.getItem('food_auth') !== 'true') {
+      window.location.href = '../index.html';
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green-dark: #1a3a2a;
+      --green-mid: #2d6a4f;
+      --green-light: #52b788;
+      --green-pale: #d8f3dc;
+      --gold: #b68d40;
+      --gold-light: #f5e6c8;
+      --navy: #1b2a4a;
+      --slate: #4a5568;
+      --light-bg: #f8faf9;
+      --white: #ffffff;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #2d3748;
+      line-height: 1.7;
+      background: var(--white);
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0.75rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-left { display: flex; align-items: center; gap: 1rem; }
+    .nav-back {
+      text-decoration: none; color: var(--green-mid); font-size: 0.85rem;
+      font-weight: 600; white-space: nowrap; transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--green-dark); }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo img { height: 44px; }
+    .nav-logo span { font-weight: 700; font-size: 1.1rem; color: var(--green-dark); letter-spacing: -0.02em; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: var(--slate); font-size: 0.85rem;
+      font-weight: 500; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--green-mid); }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--green-dark); margin: 5px 0; transition: 0.3s; }
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none; position: absolute; top: 100%; left: 0; right: 0;
+        background: white; flex-direction: column; padding: 1rem 2rem; gap: 1rem;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+      }
+      .nav-links.open { display: flex; }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative; min-height: 100vh; display: flex;
+      align-items: center; justify-content: center; overflow: hidden; padding-top: 70px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+    }
+    .hero-bg img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(26,58,42,0.88) 0%, rgba(27,42,74,0.75) 100%);
+    }
+    .hero-content {
+      position: relative; z-index: 1; text-align: center;
+      max-width: 1100px; padding: 2rem; width: 100%;
+    }
+    .hero-eyebrow {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      color: white; line-height: 1.15; margin-bottom: 0.75rem;
+    }
+    .hero-subtitle {
+      font-size: 1rem; color: rgba(255,255,255,0.8); margin-bottom: 0.5rem; line-height: 1.6;
+    }
+    .hero-breadcrumb {
+      display: inline-block; margin-bottom: 2rem;
+    }
+    .hero-breadcrumb a {
+      color: var(--green-pale); text-decoration: none; font-size: 0.9rem;
+      font-weight: 500; transition: color 0.2s;
+    }
+    .hero-breadcrumb a:hover { color: white; }
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+      max-width: 900px; margin: 0 auto;
+    }
+    .kpi-card {
+      background: rgba(255,255,255,0.12); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 1.5rem;
+      text-align: center;
+    }
+    .kpi-value {
+      font-family: 'Playfair Display', serif; font-size: 1.8rem;
+      color: var(--gold); font-weight: 700; margin-bottom: 0.25rem;
+    }
+    .kpi-label { font-size: 0.85rem; color: white; font-weight: 500; margin-bottom: 0.2rem; }
+    .kpi-source { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+    @media (max-width: 768px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+      .kpi-value { font-size: 1.4rem; }
+    }
+
+    /* SECTIONS */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-header { text-align: center; max-width: 700px; margin: 0 auto 3rem; }
+    .section-label {
+      display: inline-block; font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--green-mid); margin-bottom: 0.75rem;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      color: var(--green-dark); margin-bottom: 1rem; line-height: 1.2;
+    }
+    .section-header p { font-size: 1.05rem; color: var(--slate); line-height: 1.8; }
+    .green-underline {
+      width: 60px; height: 3px; background: var(--green-light);
+      margin: 0 auto; border-radius: 2px;
+    }
+
+    /* CHALLENGE CARDS */
+    .challenges-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+    .challenge-card {
+      background: white; border: 1px solid #e8efe8; border-radius: 14px;
+      padding: 1.5rem; transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .challenge-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+    .challenge-card h4 { color: var(--green-dark); font-size: 1rem; margin-bottom: 0.5rem; }
+    .challenge-card p { font-size: 0.88rem; color: var(--slate); line-height: 1.7; }
+
+    /* CALLOUT BOXES */
+    .callout {
+      background: linear-gradient(135deg, var(--green-pale), var(--gold-light));
+      padding: 1.25rem 1.5rem; border-radius: 10px;
+      border-left: 4px solid var(--gold); font-size: 0.95rem;
+      color: var(--green-dark); line-height: 1.7; margin: 1.5rem 0;
+    }
+    .callout-gold {
+      background: var(--gold-light); border-left: 4px solid var(--gold);
+      padding: 1.25rem 1.5rem; border-radius: 10px; margin: 1.5rem 0;
+    }
+    .callout-gold p { font-size: 0.95rem; color: var(--green-dark); line-height: 1.7; }
+
+    /* INLINE DONUT WRAPPER */
+    .inline-chart-wrap {
+      display: flex; align-items: center; justify-content: center;
+      gap: 2rem; margin-top: 2rem; flex-wrap: wrap;
+    }
+    .inline-chart-wrap canvas { max-width: 220px; max-height: 220px; }
+
+    /* DASHBOARD */
+    .dashboard-section { background: var(--light-bg); }
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .chart-card {
+      background: white; border-radius: 16px; padding: 2rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06); overflow: hidden;
+    }
+    .chart-card.full { grid-column: 1 / -1; }
+    .chart-card h3 { font-size: 1.1rem; color: var(--green-dark); margin-bottom: 0.25rem; }
+    .chart-card .chart-subtitle { font-size: 0.82rem; color: var(--slate); margin-bottom: 1rem; }
+    .chart-card .chart-source { font-size: 0.72rem; color: #a0aec0; margin-top: 0.75rem; }
+    .chart-wrap { position: relative; width: 100%; }
+    .chart-wrap canvas { width: 100% !important; }
+    .map-container { width: 100%; }
+    .map-container svg { width: 100%; height: auto; }
+    .map-tooltip {
+      position: absolute; padding: 0.6rem 1rem; background: var(--green-dark);
+      color: white; border-radius: 8px; font-size: 0.82rem; pointer-events: none;
+      opacity: 0; transition: opacity 0.2s; z-index: 100; white-space: nowrap;
+    }
+    @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
+
+    /* ACCORDION */
+    .accordion { max-width: 900px; margin: 0 auto; }
+    .accordion-item { margin-bottom: 0.5rem; border-radius: 12px; overflow: hidden; border: 1px solid #e8efe8; }
+    .accordion-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.25rem 1.5rem; cursor: pointer; background: var(--light-bg);
+      font-weight: 600; font-size: 1rem; color: var(--green-dark);
+      transition: background 0.3s, color 0.3s; user-select: none;
+    }
+    .accordion-header:hover { background: var(--green-pale); }
+    .accordion-header.active { background: var(--green-dark); color: white; }
+    .accordion-header .toggle { font-size: 1.3rem; transition: transform 0.3s; }
+    .accordion-header.active .toggle { transform: rotate(45deg); }
+    .accordion-content {
+      max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
+      background: white;
+    }
+    .accordion-body {
+      padding: 1.5rem; font-size: 0.95rem; color: var(--slate); line-height: 1.8;
+    }
+    .accordion-body p { margin-bottom: 1rem; }
+    .accordion-body ul, .accordion-body ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    .accordion-body li { margin-bottom: 0.4rem; }
+    .pull-quote {
+      background: var(--gold-light); border-left: 4px solid var(--gold);
+      padding: 1rem 1.25rem; border-radius: 8px; margin: 1rem 0;
+      font-style: italic; font-size: 0.92rem; color: var(--green-dark); line-height: 1.7;
+    }
+
+    /* TRL SOLUTIONS */
+    .trl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .trl-column { border-radius: 16px; overflow: hidden; background: white; border: 1px solid #e8efe8; }
+    .trl-header { padding: 1.25rem 1.5rem; color: white; font-weight: 700; font-size: 1rem; }
+    .trl-header.commercial { background: var(--green-dark); }
+    .trl-header.rd { background: var(--green-mid); }
+    .trl-header.emerging { background: var(--navy); }
+    .trl-header small { display: block; font-size: 0.75rem; font-weight: 400; opacity: 0.8; margin-top: 0.25rem; }
+    .trl-list { padding: 1.25rem; }
+    .trl-item {
+      padding: 1rem; margin-bottom: 0.75rem; background: var(--light-bg);
+      border-radius: 10px; border-left: 3px solid transparent;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .trl-item:hover { transform: translateX(4px); }
+    .trl-column:nth-child(1) .trl-item:hover { border-left-color: var(--green-dark); }
+    .trl-column:nth-child(2) .trl-item:hover { border-left-color: var(--green-mid); }
+    .trl-column:nth-child(3) .trl-item:hover { border-left-color: var(--navy); }
+    .trl-item h4 { font-size: 0.92rem; color: var(--green-dark); margin-bottom: 0.35rem; }
+    .trl-item p { font-size: 0.82rem; color: var(--slate); line-height: 1.6; }
+    @media (max-width: 900px) { .trl-grid { grid-template-columns: 1fr; } }
+
+    /* FOOTER */
+    footer {
+      background: #0f1f17; color: rgba(255,255,255,0.6); padding: 3rem 2rem;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto; display: flex;
+      justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo { display: flex; align-items: center; gap: 0.75rem; }
+    .footer-logo img { height: 36px; opacity: 0.8; }
+    .footer-logo span { font-weight: 600; color: rgba(255,255,255,0.8); font-size: 0.95rem; }
+    .footer-text { font-size: 0.85rem; }
+    .footer-text a { color: var(--green-light); text-decoration: none; }
+    .footer-text a:hover { text-decoration: underline; }
+
+    /* ANIMATIONS */
+    .fade-up {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-left">
+      <a href="../index.html" class="nav-back">&larr; FOOD Center</a>
+      <a href="../index.html" class="nav-logo">
+        <img src="../logo/logo_final.png" alt="FOOD Center Logo">
+        <span>FOOD Center</span>
+      </a>
+    </div>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="#highlights">Highlights</a></li>
+      <li><a href="#dashboard">Data</a></li>
+      <li><a href="#sector-profile">Sector Profile</a></li>
+      <li><a href="#solutions">Solutions</a></li>
+      <li><a href="../index.html#get-involved">Get Involved</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="../images/wheat-harvest.jpg" alt="Wheat harvest" loading="lazy">
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">FOOD Center &mdash; Subsector Profile</div>
+    <h1>U.S. Agriculture</h1>
+    <p class="hero-subtitle">Conventional Agriculture &amp; Controlled Environment Agriculture | NAICS 111, 112, 1114</p>
+    <div class="hero-breadcrumb"><a href="../index.html">&larr; Back to FOOD Center</a></div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="513.5" data-prefix="$" data-suffix="B">$0</div>
+        <div class="kpi-label">Total Cash Receipts (2024)</div>
+        <div class="kpi-source">USDA ERS 2025</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="1.88" data-suffix="M">0</div>
+        <div class="kpi-label">Farms</div>
+        <div class="kpi-source">USDA NASS 2024</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="880" data-suffix="M acres">0</div>
+        <div class="kpi-label">Land in Farms</div>
+        <div class="kpi-source">2022 Census of Ag</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="222.3" data-prefix="$" data-suffix="B">$0</div>
+        <div class="kpi-label">Farm Contribution to GDP</div>
+        <div class="kpi-source">~0.8% of U.S. GDP</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="663.6" data-suffix=" MMT CO&#8322;e">0</div>
+        <div class="kpi-label">GHG Emissions (2022)</div>
+        <div class="kpi-source">~10% of U.S. total</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" data-target="1872" data-comma="true" data-suffix=" TBtu">0</div>
+        <div class="kpi-label">Direct On-Farm Energy Use</div>
+        <div class="kpi-source">~1.9% of U.S. primary energy</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEY HIGHLIGHTS -->
+<section id="highlights">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">At a Glance</div>
+      <h2>Key Highlights</h2>
+      <div class="green-underline"></div>
+    </div>
+
+    <div class="challenges-grid fade-up">
+      <div class="challenge-card">
+        <h4>Water-Energy Nexus</h4>
+        <p>53.1M irrigated acres, $3.3B/yr pumping energy. Ogallala Aquifer lost 286M acre-feet (~9%) since predevelopment.</p>
+      </div>
+      <div class="challenge-card">
+        <h4>Hard-to-Abate Emissions</h4>
+        <p>Soil N&#8322;O (49%) + enteric methane (32.5%) = 663.6 MMT CO&#8322;e. Non-CO&#8322; gases lack scalable mitigation.</p>
+      </div>
+      <div class="challenge-card">
+        <h4>Farm Concentration &amp; Access</h4>
+        <p>4.7% of farms (89,210 operations) produce 75% of all sales. Technology adoption skews heavily to large operations.</p>
+      </div>
+    </div>
+
+    <div class="callout-gold fade-up" style="margin-top: 2rem;">
+      <p><strong>"The top 4.7% of farms (89,210 operations) account for 75% of all sales &mdash; the top 3,785 farms account for 25%."</strong></p>
+    </div>
+
+    <div class="inline-chart-wrap fade-up">
+      <canvas id="highlights-donut" width="220" height="220"></canvas>
+      <div>
+        <p style="font-size:0.9rem; color:var(--slate);">Crop receipts: <strong>$244.9B</strong><br>Livestock receipts: <strong>$268.6B</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA DASHBOARD -->
+<section class="dashboard-section" id="dashboard">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">Data Dashboard</div>
+      <h2>Agricultural Data Explorer</h2>
+      <div class="green-underline"></div>
+    </div>
+
+    <div class="chart-grid">
+      <!-- Chart 1: US Map -->
+      <div class="chart-card full fade-up">
+        <h3>Farm Market Value by State (2022 Ag Census)</h3>
+        <p class="chart-subtitle">Total market value of all agricultural products sold</p>
+        <div class="map-container" id="us-map"></div>
+        <div class="map-tooltip" id="map-tooltip"></div>
+        <div class="chart-wrap" style="height:300px; margin-top:1.5rem;">
+          <canvas id="top-states-bar"></canvas>
+        </div>
+        <p class="chart-source">Source: USDA NASS, 2022 Census of Agriculture</p>
+      </div>
+
+      <!-- Chart 2: Revenue Breakdown -->
+      <div class="chart-card fade-up">
+        <h3>2024 Cash Receipts by Commodity ($B)</h3>
+        <p class="chart-subtitle">Revenue breakdown across major agricultural commodities</p>
+        <div class="chart-wrap" style="height:320px;">
+          <canvas id="revenue-bar"></canvas>
+        </div>
+        <p class="chart-source">Source: USDA ERS Farm Income and Wealth Statistics, 2025</p>
+      </div>
+
+      <!-- Chart 3: GHG Donut -->
+      <div class="chart-card fade-up">
+        <h3>Agricultural GHG Emissions Profile (2022)</h3>
+        <p class="chart-subtitle">663.6 MMT CO&#8322;e &mdash; ~10% of U.S. total emissions</p>
+        <div class="chart-wrap" style="height:320px;">
+          <canvas id="ghg-donut"></canvas>
+        </div>
+        <div class="callout" style="margin-top:1rem;">
+          Soil N&#8322;O (49%) and enteric methane (32.5%) dominate &mdash; these gases lack scalable engineering mitigation pathways.
+        </div>
+        <p class="chart-source">Source: USDA/EPA Inventory of GHG Emissions, 2024</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTOR PROFILE -->
+<section id="sector-profile">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">Deep Dive</div>
+      <h2>Sector Profile</h2>
+      <p>Comprehensive pre-interview research findings</p>
+      <div class="green-underline"></div>
+    </div>
+
+    <div class="accordion fade-up">
+      <div class="accordion-item">
+        <div class="accordion-header active">
+          <span>1. Executive Summary</span>
+          <span class="toggle">+</span>
+        </div>
+        <div class="accordion-content" style="max-height:2000px;">
+          <div class="accordion-body">
+            <p>U.S. agriculture generates over $513 billion in annual commodity receipts across 1.88 million farms and 880 million acres, anchoring a food and agricultural system that supports 22.1 million jobs and contributes roughly $1.5 trillion to GDP. The sector faces a defining tension: it must continue to increase output and affordability while addressing severe structural vulnerabilities in water, energy, emissions, and labor.</p>
+            <div class="pull-quote">"U.S. agriculture generates over $513 billion in annual commodity receipts across 1.88 million farms and 880 million acres &mdash; yet the sector's energy intensity, non-CO&#8322; emissions profile, and structural water vulnerabilities make it one of the most complex and consequential targets for DOE R&amp;D investment."</div>
+            <p>Agriculture directly consumes approximately 1,872 TBtu of primary energy annually (~1.9% of U.S. total) and generates 663.6 MMT CO&#8322;e in greenhouse gas emissions (~10% of U.S. total). Critically, the sector's emissions are dominated by non-CO&#8322; gases &mdash; soil nitrous oxide (49%) and enteric methane (32.5%) &mdash; that lack the scalable engineering mitigation pathways available for CO&#8322;.</p>
+            <p>Farm consolidation continues to accelerate: the top 4.7% of farms now account for 75% of all sales, and the top 3,785 farms account for 25%. This concentration shapes technology adoption, policy reach, and the economic resilience of rural communities. DOE R&amp;D investments that target the structural energy, emissions, and water challenges of the sector can deliver outsized returns in competitiveness, affordability, and climate mitigation.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>2. Products &amp; Services (NAICS Coverage)</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>The agriculture subsector encompasses NAICS 111 (Crop Production) and NAICS 112 (Animal Production and Aquaculture), along with NAICS 1114 (Greenhouse, Nursery, and Floriculture Production) for controlled environment agriculture.</p>
+          <p><strong>Crop production (NAICS 111)</strong> covers field crops (corn, soybeans, wheat, cotton, rice), specialty crops (fruits, vegetables, tree nuts), and oilseeds. In 2024, crop cash receipts totaled $244.9 billion across 311.2 million harvested acres. Corn alone accounted for $82.0 billion on 91.5 million planted acres, with a record yield of 179.3 bushels per acre. Soybeans contributed $30.7 billion on 87.1 million planted acres. Specialty crops &mdash; defined by USDA as fruits, vegetables, tree nuts, dried fruits, horticulture, and nursery crops &mdash; generated approximately $58.3 billion, with California producing roughly 50% of U.S. specialty crop value.</p>
+          <p><strong>Animal production (NAICS 112)</strong> includes cattle and calves, dairy, poultry and eggs, hogs, and aquaculture. Livestock cash receipts reached $268.6 billion in 2024, with cattle and calves alone contributing $112.1 billion at record per-head prices of $186.86/cwt. Poultry and eggs generated $70.2 billion (9.33 billion broilers and 109 billion eggs), dairy contributed $50.7 billion (226 billion pounds of milk from 9.57 million cows), and hogs produced approximately $27.2 billion from a 75.5 million head inventory. Aquaculture remains relatively small at $1.9 billion across 3,453 farms, though the U.S. imports over 79% of the seafood it consumes.</p>
+          <p><strong>CEA (subset of NAICS 1114)</strong> encompasses greenhouse vegetable production and indoor vertical farming. Greenhouse vegetable sales totaled $1.34 billion across 133 million square feet of protected growing space in 11,465 CEA operations (2022 Census). CEA offers 10&ndash;20x yield improvements over open-field production and 90&ndash;95% water savings, but faces severe energy cost constraints that currently limit commercial viability, particularly for indoor vertical farms.</p>
+          <p><strong>Adjacent sectors:</strong> Agriculture's upstream connections include fertilizer manufacturing (NAICS 3253), agricultural chemical manufacturing (NAICS 3253), farm machinery (NAICS 3331), and irrigation systems (NAICS 3332). Downstream connections include animal slaughter/processing (NAICS 3116), grain and oilseed milling (NAICS 3112), and dairy product manufacturing (NAICS 3115).</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>3. Leading Producers &amp; Market Concentration</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <div class="pull-quote">"The top 4.7% of farms (89,210 operations) account for 75% of all sales &mdash; the top 3,785 farms account for 25%."</div>
+          <p>U.S. agriculture is characterized by extreme market concentration. While the USDA counts 1.88 million farms, the vast majority are small operations: 73% of farms have gross cash farm income under $100,000 and account for just 4% of total agricultural output. The average farm size is 471 acres (up 5% from 2017), but this figure masks enormous variation from hobby farms under 50 acres to operations exceeding 50,000 acres.</p>
+          <p><strong>Top producing states by market value (2022 Ag Census):</strong> California ($59.0B), Iowa ($43.9B), Texas ($32.2B), Nebraska ($29.4B), Minnesota ($28.5B), Illinois ($26.4B), Kansas ($24.0B), North Carolina ($18.7B), Indiana ($18.0B), and Wisconsin ($16.7B). California alone produces approximately 13% of U.S. agricultural output by value, dominating in specialty crops, dairy, and almonds. Iowa leads in corn, soybeans, and hogs, producing one-third of all U.S. hog inventory.</p>
+          <p><strong>Farm typology (ERS classification):</strong> Small family farms (GCFI &lt;$350K) account for 89.6% of all farms but only 21% of production value. Midsize family farms ($350K&ndash;$999K) are 5.7% of farms and 16% of value. Large family farms ($1M+) are 3.4% of farms and 47% of value. Non-family farms are 1.3% of farms and 16% of value. The ongoing consolidation trend means fewer, larger operations are producing an increasing share of output.</p>
+          <p><strong>Input supply concentration:</strong> Four companies (Bayer/Monsanto, Corteva, BASF, Syngenta/ChemChina) control roughly 60% of the global seed and crop protection market. In farm equipment, three firms (Deere, CNH Industrial, AGCO) dominate the large machinery market. In fertilizer, five companies (Nutrien, Mosaic, CF Industries, Koch Fertilizer, OCI) control the majority of North American nitrogen and phosphate production.</p>
+          <p><strong>Processing/buyer concentration:</strong> In meatpacking, four firms (Tyson, JBS, Cargill, National Beef/Marfrig) process approximately 85% of U.S. fed cattle and 70% of hogs. In grain trading, four companies (Cargill, ADM, Bunge, Louis Dreyfus &mdash; "ABCD" firms) handle an estimated 70&ndash;90% of global grain trade. This dual concentration (large farms upstream, large processors downstream) creates competitive pressure on midsize operations.</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>4. Production Processes</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>Agricultural production processes span the full biological and mechanical spectrum, from soil preparation and planting through harvest, post-harvest handling, and animal husbandry.</p>
+          <p><strong>Crop production</strong> follows a seasonal cycle: tillage/soil preparation, planting, nutrient application (fertilizer, lime), pest management (herbicides, insecticides, fungicides), irrigation, harvest, and grain drying/storage. Energy inputs include diesel for field operations, electricity and natural gas for irrigation pumping, and propane/natural gas for grain drying.</p>
+          <p><strong>Livestock production</strong> involves feeding, watering, climate control (heating/cooling barns), manure management, and milking (for dairy). Energy inputs include electricity for ventilation, lighting, and milking systems; propane/natural gas for heating; and diesel for feed mixing and transport.</p>
+          <p><strong>CEA production</strong> uses supplemental lighting (LEDs), HVAC, fertigation, and CO&#8322; enrichment systems in enclosed environments. Energy is the dominant operating cost, accounting for 25&ndash;35% of total costs in greenhouses and up to 50% in indoor vertical farms.</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>5. Supply &amp; Demand</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>U.S. agriculture produces food, feed, fiber, and fuel for both domestic consumption and export. The U.S. is the world's largest agricultural exporter, with $170+ billion in annual agricultural exports. Key export commodities include soybeans, corn, tree nuts, beef, pork, and dairy products.</p>
+          <p><strong>Upstream inputs</strong> include seeds, fertilizers, crop protection chemicals, fuel, machinery, irrigation water, animal feed, and veterinary products. Total production expenses reached approximately $467 billion in 2024.</p>
+          <p><strong>Downstream connections</strong> link to food processing (NAICS 311), beverage manufacturing (NAICS 312), animal slaughter/processing, grain elevators, and commodity trading. The food dollar series shows that the farm share of the consumer food dollar is approximately 14.3 cents &mdash; the remaining 85.7 cents goes to processing, transportation, retail, and foodservice.</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>6. Change Drivers</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>Several forces are reshaping U.S. agriculture:</p>
+          <ul>
+            <li><strong>Climate variability:</strong> Increasing drought frequency, extreme heat events, and shifting precipitation patterns directly affect crop yields and livestock productivity.</li>
+            <li><strong>Water scarcity:</strong> The Ogallala Aquifer has lost 286 million acre-feet (~9%) since predevelopment, threatening irrigated agriculture across the High Plains.</li>
+            <li><strong>Labor shortages:</strong> The agricultural workforce has declined 17% since 2006. H-2A visa applications have tripled since 2012, signaling deepening labor constraints.</li>
+            <li><strong>Input cost inflation:</strong> Fertilizer, fuel, and seed costs have risen sharply since 2020, compressing farm margins despite record commodity prices in 2022.</li>
+            <li><strong>Technology adoption:</strong> Precision agriculture, autonomous equipment, and digital platforms are transforming large-scale operations but remain inaccessible to most small and mid-size farms.</li>
+            <li><strong>Regulatory pressure:</strong> EPA WOTUS definitions, USDA conservation compliance, and emerging GHG reporting requirements add compliance costs and complexity.</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>7. Technologies, Inputs &amp; Byproducts</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p><strong>Key technologies:</strong> GPS/autosteering (70% adoption on large farms), yield monitors, variable-rate application, drone and satellite imagery, soil sensors, automated irrigation controls, robotic milking systems, and anaerobic digesters.</p>
+          <div class="pull-quote">"Natural gas accounts for up to 80% of nitrogen fertilizer manufacturing cost, directly coupling fertilizer prices to natural gas markets."</div>
+          <p><strong>Energy inputs:</strong> U.S. agriculture consumes approximately 1,872 TBtu annually. Diesel dominates field operations; electricity and natural gas drive irrigation pumping; propane/natural gas is used for grain drying and livestock facility heating. Fertilizer production (upstream) is one of the most energy-intensive chemical manufacturing processes.</p>
+          <p><strong>Byproducts and waste streams:</strong> Crop residues (corn stover, wheat straw), animal manure, food processing waste, and post-harvest losses. Anaerobic digestion can convert manure into biogas (400 operating farm digesters; 8,000+ additional farms are technically suitable). Crop residues have potential as biofuel feedstocks but compete with soil health benefits of residue retention.</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>8. Key Players &amp; Stakeholder Landscape</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p><strong>Input suppliers:</strong> Deere &amp; Company ($61.3B revenue), CNH Industrial, AGCO, Bayer Crop Science, Corteva Agriscience, Nutrien, The Mosaic Company.</p>
+          <p><strong>Processors/buyers:</strong> Cargill ($177B), Archer Daniels Midland, Bunge, Tyson Foods ($53B), JBS USA, Dairy Farmers of America.</p>
+          <p><strong>Technology providers:</strong> Trimble, Raven Industries (CNH), Climate Corporation (Bayer), Monarch Tractor, Solectrac, Blue River Technology (Deere).</p>
+          <p><strong>Trade associations:</strong> American Farm Bureau Federation, National Cattlemen's Beef Association, National Pork Producers Council, United Dairymen, National Corn Growers Association.</p>
+          <p><strong>Federal agencies:</strong> USDA (NRCS, FSA, ARS, ERS, NASS), DOE (EERE, BER), EPA, Army Corps of Engineers (water infrastructure).</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>9. Energy &amp; Technology Challenges</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>The agricultural sector faces several interconnected energy and technology challenges that represent high-priority targets for DOE R&amp;D:</p>
+          <ul>
+            <li><strong>Irrigation pumping efficiency:</strong> 53.1 million irrigated acres at $3.3B annual energy cost. Variable-frequency drive (VFD) adoption on pumps remains below 20%.</li>
+            <li><strong>Grain drying energy intensity:</strong> Drying consumes 1,500&ndash;4,500 BTU per pound of water removed. Combination drying (high-temp + in-bin finishing) can reduce energy use by ~50%.</li>
+            <li><strong>On-farm electrification barriers:</strong> Battery-powered tractors (Monarch, Solectrac, Deere pilots) offer 4&ndash;8 hour battery life vs. all-day diesel operations. Charging infrastructure in rural areas is minimal.</li>
+            <li><strong>CEA energy optimization:</strong> Indoor vertical farms consume 30&ndash;80 kWh/kg of produce. The viability threshold is &lt;5 kWh/kg for leafy greens. Integrated LED + HVAC optimization is the primary R&amp;D pathway.</li>
+            <li><strong>Methane mitigation:</strong> Enteric methane from livestock (215.6 MMT CO&#8322;e) has no scalable engineering solution. Feed additives (3-NOP/Bovaer, FDA approved 2024) show 20&ndash;30% reduction in trials but face adoption barriers.</li>
+            <li><strong>Soil N&#8322;O emissions:</strong> The largest single agricultural GHG source (324.9 MMT CO&#8322;e). Enhanced efficiency fertilizers and precision application can reduce emissions 10&ndash;30% but are not widely adopted.</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>10. Competitivity &amp; Market Structure</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>U.S. agriculture is globally competitive but faces growing structural headwinds. Total factor productivity growth has averaged 1.4% annually since 1948, but the rate has slowed in recent decades. Key competitiveness metrics:</p>
+          <ul>
+            <li><strong>Net farm income:</strong> $151.6B nationally (2024), but highly concentrated. Median net farm income from farming alone is &minus;$1,189 (2025 forecast), meaning most farm households depend on off-farm income.</li>
+            <li><strong>Productivity:</strong> U.S. corn yields (179.3 bu/acre) and milk production per cow (24,178 lbs/yr) are world-leading, driven by genetics, inputs, and management practices.</li>
+            <li><strong>Trade position:</strong> The U.S. is the world's largest agricultural exporter ($170+ billion), but faces increasing competition from Brazil, Argentina, and the EU in key commodities.</li>
+            <li><strong>Input cost ratio:</strong> Production expenses ($467B) consume roughly 86% of gross farm revenue, leaving thin margins that make farms vulnerable to price volatility.</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>11. Outlook</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>The agricultural sector stands at an inflection point. Key trends shaping the 2025&ndash;2035 outlook:</p>
+          <ul>
+            <li><strong>Precision ag mainstreaming:</strong> GPS/autosteering and yield monitoring are approaching saturation on large farms. The next frontier is variable-rate technology, autonomous equipment, and AI-driven decision tools.</li>
+            <li><strong>Farm electrification:</strong> Electric tractor pilots are underway (Monarch, Solectrac, Deere), but battery energy density and rural charging infrastructure remain bottlenecks. Electrification of stationary equipment (irrigation, grain handling) is more immediately viable.</li>
+            <li><strong>Renewable energy on farms:</strong> USDA REAP has funded 8,012 on-farm renewable projects. The IRA allocated $2B+ for agricultural clean energy. Farm-sited solar and wind are growing revenue streams.</li>
+            <li><strong>CEA consolidation:</strong> The indoor vertical farming segment is undergoing severe shakeout. Greenhouses with hybrid (natural + supplemental lighting) models are viable; pure indoor vertical farms face existential energy cost challenges.</li>
+            <li><strong>Climate-smart agriculture:</strong> USDA's Agriculture Management Practice (AMP) program, successor to the $3.1B Climate-Smart Commodities initiative, is reshaping practice incentive structures and MRV requirements.</li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTIONS -->
+<section id="solutions" style="background: var(--light-bg);">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">Solutions Landscape</div>
+      <h2>Technology Readiness Level Framework</h2>
+      <div class="green-underline"></div>
+    </div>
+
+    <div class="trl-grid fade-up">
+      <div class="trl-column">
+        <div class="trl-header commercial">TRL 8&ndash;10: Commercial<small>Existing &amp; Deployable</small></div>
+        <div class="trl-list">
+          <div class="trl-item">
+            <h4>Precision Guidance &amp; Autosteering</h4>
+            <p>GPS autosteering and variable-rate application. 70% adoption on large farms; significant efficiency gains in input use.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Irrigation Modernization</h4>
+            <p>Pressurized sprinkler/drip systems, pump VFD upgrades, ET-based scheduling. Proven 20&ndash;40% water savings.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Anaerobic Digestion / Biogas</h4>
+            <p>Manure-to-biogas on dairy and hog operations. 400 operating digesters; 8,000+ additional suitable farms.</p>
+          </div>
+          <div class="trl-item">
+            <h4>On-Farm Renewable Energy</h4>
+            <p>USDA REAP: 8,012 projects funded. IRA allocated $2B+ for agricultural clean energy deployment.</p>
+          </div>
+        </div>
+      </div>
+      <div class="trl-column">
+        <div class="trl-header rd">TRL 5&ndash;7: R&amp;D / Early Commercial<small>Pilot &amp; Demonstration Stage</small></div>
+        <div class="trl-list">
+          <div class="trl-item">
+            <h4>Farm Robotics</h4>
+            <p>Autonomous harvesters for labor-intensive crops. Reliability and field servicing constraints remain key barriers.</p>
+          </div>
+          <div class="trl-item">
+            <h4>CEA Energy Optimization</h4>
+            <p>Integrated LED + HVAC controls targeting &lt;5 kWh/kg for leafy greens. System-level optimization is critical.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Methane-Suppressing Feed Additives</h4>
+            <p>3-NOP/Bovaer: FDA approved 2024. 20&ndash;30% enteric methane reduction in trials; adoption is still minimal.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Advanced Irrigation Accounting</h4>
+            <p>M&amp;V frameworks for pumping energy optimization. Improved energy-water accounting at the field level.</p>
+          </div>
+        </div>
+      </div>
+      <div class="trl-column">
+        <div class="trl-header emerging">TRL 0&ndash;4: Emerging<small>Pre-Commercial &amp; Research</small></div>
+        <div class="trl-list">
+          <div class="trl-item">
+            <h4>Farm Equipment Electrification</h4>
+            <p>Battery tractors (Monarch, Solectrac, Deere pilots): 4&ndash;8 hr battery life vs. all-day diesel. Rural charging infrastructure is minimal.</p>
+          </div>
+          <div class="trl-item">
+            <h4>Enhanced Rock Weathering</h4>
+            <p>Soil carbon sequestration via crusite/basalt application. MRV methodologies are under review; scalability uncertain.</p>
+          </div>
+          <div class="trl-item">
+            <h4>USDA AMP Program</h4>
+            <p>Successor to Climate-Smart Commodities. Reshaping practice incentives and MRV requirements for agricultural emissions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <img src="../logo/logo_final.png" alt="FOOD Center">
+      <span>FOOD Center</span>
+    </div>
+    <div class="footer-text">
+      Food &amp; Beverage Operational Optimization and Deployment Center<br>
+      <a href="https://www.lbl.gov" target="_blank" rel="noopener">Lawrence Berkeley National Laboratory</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── NAV SCROLL ──
+var navbar = document.getElementById('navbar');
+window.addEventListener('scroll', function() {
+  navbar.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// ── SMOOTH SCROLL ──
+document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    var target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      var navLinks = document.querySelector('.nav-links');
+      if (navLinks) navLinks.classList.remove('open');
+    }
+  });
+});
+
+// ── FADE-UP OBSERVER ──
+var fadeObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(function(el) { fadeObserver.observe(el); });
+
+// ── KPI COUNTER ANIMATION ──
+function countUp(el, target, prefix, suffix, duration, useComma) {
+  var start = performance.now();
+  var isDecimal = target % 1 !== 0;
+  function update(now) {
+    var elapsed = now - start;
+    var progress = Math.min(elapsed / duration, 1);
+    var eased = 1 - Math.pow(1 - progress, 3);
+    var current = target * eased;
+    var display;
+    if (isDecimal) {
+      display = current.toFixed(1);
+    } else {
+      display = Math.round(current).toString();
+    }
+    if (useComma) {
+      display = Number(display).toLocaleString('en-US');
+    }
+    el.textContent = (prefix || '') + display + (suffix || '');
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+var kpiObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting && !entry.target.dataset.animated) {
+      entry.target.dataset.animated = 'true';
+      var el = entry.target;
+      var target = parseFloat(el.dataset.target);
+      var prefix = el.dataset.prefix || '';
+      var suffix = el.dataset.suffix || '';
+      var useComma = el.dataset.comma === 'true';
+      countUp(el, target, prefix, suffix, 1800, useComma);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.kpi-value').forEach(function(el) { kpiObserver.observe(el); });
+
+// ── ACCORDION ──
+document.querySelectorAll('.accordion-header').forEach(function(header) {
+  header.addEventListener('click', function() {
+    var content = header.nextElementSibling;
+    var isOpen = header.classList.contains('active');
+    // Close all
+    document.querySelectorAll('.accordion-content').forEach(function(c) { c.style.maxHeight = null; });
+    document.querySelectorAll('.accordion-header').forEach(function(h) { h.classList.remove('active'); });
+    // Open clicked if it was closed
+    if (!isOpen) {
+      content.style.maxHeight = content.scrollHeight + 'px';
+      header.classList.add('active');
+    }
+  });
+});
+
+// ── CHART.JS SETUP ──
+Chart.register(ChartDataLabels);
+Chart.defaults.font.family = "'Inter', sans-serif";
+
+// ── INIT ALL CHARTS ──
+function initAllCharts() {
+  // Highlights donut (Crop vs Livestock)
+  try {
+    new Chart(document.getElementById('highlights-donut'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Crop Receipts ($244.9B)', 'Livestock Receipts ($268.6B)'],
+        datasets: [{ data: [244.9, 268.6], backgroundColor: ['#52b788', '#b68d40'], borderWidth: 0 }]
+      },
+      options: {
+        responsive: false, maintainAspectRatio: true, cutout: '60%',
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 16 } }, datalabels: { display: false } },
+        animation: { duration: 1200 }
+      }
+    });
+  } catch(e) { console.warn('highlights-donut:', e); }
+
+  // Revenue Bar
+  try {
+    new Chart(document.getElementById('revenue-bar'), {
+      type: 'bar',
+      data: {
+        labels: ['Corn + Soybeans', 'Cattle & Calves', 'Other Crops', 'Poultry & Eggs', 'Specialty Crops', 'Dairy', 'Hogs'],
+        datasets: [{
+          data: [112.7, 112.1, 74.2, 70.2, 58.3, 50.7, 27.2],
+          backgroundColor: ['#2d6a4f','#b68d40','#52b788','#b68d40','#2d6a4f','#b68d40','#d4a855'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#2d3748', font: { weight: 600, size: 11 }, formatter: function(v) { return '$' + v + 'B'; } } },
+        scales: { x: { display: false, max: 135 }, y: { grid: { display: false }, ticks: { font: { size: 12 } } } },
+        animation: { duration: 1200 }
+      }
+    });
+  } catch(e) { console.warn('revenue-bar:', e); }
+
+  // GHG Donut
+  try {
+    new Chart(document.getElementById('ghg-donut'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Soil N\u2082O (Ag Soils)', 'Enteric Fermentation', 'Manure Management', 'Rice Cultivation', 'Field Burning', 'Other'],
+        datasets: [{ data: [324.9, 215.6, 88.0, 24.8, 5.2, 5.1], backgroundColor: ['#1a3a2a','#2d6a4f','#52b788','#b68d40','#1b2a4a','#d8f3dc'], borderWidth: 2, borderColor: '#fff' }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '55%',
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, usePointStyle: true } },
+          datalabels: { color: '#fff', font: { weight: 600, size: 11 }, formatter: function(v) { var pct = ((v/663.6)*100).toFixed(0); return pct > 5 ? pct+'%' : ''; } }
+        },
+        animation: { duration: 1200 }
+      }
+    });
+  } catch(e) { console.warn('ghg-donut:', e); }
+}
+
+// Init charts after a short delay to ensure DOM is settled
+setTimeout(initAllCharts, 300);
+
+// ── D3 US MAP ──
+(function() {
+  var mapContainer = document.getElementById('us-map');
+  if (!mapContainer) return;
+
+  var farmDataUrl = '../old_fnb_dashboard/_dashboard/frontend/dist/data/farm_data.json';
+  var topoUrl = 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json';
+
+  // Fetch both data sources separately for better error handling
+  var topoPromise = fetch(topoUrl).then(function(r) { return r.json(); });
+  var farmPromise = fetch(farmDataUrl).then(function(r) { return r.json(); });
+
+  Promise.all([topoPromise, farmPromise]).then(function(results) {
+    var us = results[0];
+    var farmData = results[1];
+
+    // Check that topojson is defined before using it
+    if (typeof topojson === 'undefined') {
+      console.error('topojson not loaded');
+      mapContainer.innerHTML = '<p style="text-align:center;color:var(--slate);padding:2rem;">TopoJSON library failed to load.</p>';
+      return;
+    }
+
+    try {
+      var states = topojson.feature(us, us.objects.states);
+    } catch(e) {
+      console.error('topojson.feature() failed:', e);
+      mapContainer.innerHTML = '<p style="text-align:center;color:var(--slate);padding:2rem;">Map data could not be processed.</p>';
+      return;
+    }
+
+    var stateValues = {};
+    farmData.byState.forEach(function(s) {
+      stateValues[s.stateFips] = { value: s.value, name: s.name };
+    });
+
+    var values = Object.values(stateValues).map(function(d) { return d.value; }).filter(function(v) { return v > 0; });
+    var colorScale = d3.scaleQuantile().domain(values).range(['#d8f3dc', '#95d5b2', '#52b788', '#2d6a4f', '#1a3a2a']);
+
+    var width = 960, height = 600;
+    var svg = d3.select(mapContainer).append('svg')
+      .attr('viewBox', '0 0 ' + width + ' ' + height)
+      .attr('preserveAspectRatio', 'xMidYMid meet')
+      .style('width', '100%').style('height', 'auto');
+
+    var projection = d3.geoAlbersUsa().fitSize([width, height], states);
+    var path = d3.geoPath().projection(projection);
+    var tooltip = document.getElementById('map-tooltip');
+
+    svg.selectAll('path')
+      .data(states.features).join('path')
+      .attr('d', path)
+      .attr('fill', function(d) { return stateValues[d.id] ? colorScale(stateValues[d.id].value) : '#e8efe8'; })
+      .attr('stroke', '#fff').attr('stroke-width', 0.8)
+      .style('cursor', 'pointer')
+      .on('mouseover', function(event, d) {
+        var info = stateValues[d.id];
+        if (info) {
+          var valB = (info.value / 1e9).toFixed(1);
+          var name = info.name.charAt(0) + info.name.slice(1).toLowerCase();
+          tooltip.innerHTML = '<strong>' + name + '</strong><br>$' + valB + 'B market value';
+          tooltip.style.opacity = '1';
+        }
+        d3.select(this).attr('stroke', '#b68d40').attr('stroke-width', 2);
+      })
+      .on('mousemove', function(event) {
+        var rect = mapContainer.getBoundingClientRect();
+        tooltip.style.left = (event.clientX - rect.left + 12) + 'px';
+        tooltip.style.top = (event.clientY - rect.top - 10) + 'px';
+      })
+      .on('mouseout', function() {
+        tooltip.style.opacity = '0';
+        d3.select(this).attr('stroke', '#fff').attr('stroke-width', 0.8);
+      });
+
+    // Legend
+    var legendColors = colorScale.range();
+    var legend = svg.append('g').attr('transform', 'translate(' + (width - 200) + ',' + (height - 80) + ')');
+    legendColors.forEach(function(color, i) {
+      legend.append('rect').attr('x', i * 32).attr('y', 0).attr('width', 30).attr('height', 12).attr('fill', color).attr('rx', 2);
+    });
+    legend.append('text').attr('x', 0).attr('y', 26).text('Low').attr('font-size', '10px').attr('fill', '#4a5568');
+    legend.append('text').attr('x', legendColors.length * 32 - 20).attr('y', 26).text('High').attr('font-size', '10px').attr('fill', '#4a5568');
+
+    // Top 5 states bar chart
+    var sorted = farmData.byState.sort(function(a,b) { return b.value - a.value; }).slice(0, 5);
+    var barCtx = document.getElementById('top-states-bar');
+    if (barCtx) {
+      try {
+        new Chart(barCtx, {
+          type: 'bar',
+          data: {
+            labels: sorted.map(function(s) { return s.name.charAt(0) + s.name.slice(1).toLowerCase(); }),
+            datasets: [{ data: sorted.map(function(s) { return +(s.value / 1e9).toFixed(1); }), backgroundColor: ['#1a3a2a','#2d6a4f','#2d6a4f','#52b788','#52b788'], borderRadius: 6 }]
+          },
+          options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#2d3748', font: { weight: 600, size: 12 }, formatter: function(v) { return '$'+v+'B'; } } },
+            scales: { x: { display: false }, y: { grid: { display: false }, ticks: { font: { size: 13 } } } },
+            animation: { duration: 1200 }
+          }
+        });
+      } catch(e) { console.warn('top-states-bar:', e); }
+    }
+  }).catch(function(err) {
+    console.error('Map data failed to load:', err);
+    mapContainer.innerHTML = '<p style="text-align:center;color:var(--slate);padding:2rem;">Map data could not be loaded. Error: ' + err.message + '</p>';
+  });
+})();
+</script>
+
+</body>
+</html>
