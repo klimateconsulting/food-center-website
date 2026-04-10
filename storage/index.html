@@ -46,21 +46,39 @@
       max-width: 1200px; margin: 0 auto; padding: 0.75rem 2rem;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .nav-left { display: flex; align-items: center; gap: 1rem; }
-    .nav-back {
-      text-decoration: none; color: var(--green-mid); font-size: 0.85rem;
-      font-weight: 600; white-space: nowrap; transition: color 0.2s;
-    }
-    .nav-back:hover { color: var(--green-dark); }
     .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
     .nav-logo img { height: 44px; }
     .nav-logo span { font-weight: 700; font-size: 1.1rem; color: var(--green-dark); letter-spacing: -0.02em; }
-    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
     .nav-links a {
-      text-decoration: none; color: var(--slate); font-size: 0.85rem;
+      text-decoration: none; color: var(--slate); font-size: 0.9rem;
       font-weight: 500; transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--green-mid); }
+    .nav-cta {
+      background: var(--green-mid); color: white !important;
+      padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 600; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--green-dark); }
+    .nav-dropdown { position: relative; padding-bottom: 0.5rem; margin-bottom: -0.5rem; }
+    .nav-dropdown > a { cursor: pointer; }
+    .nav-dropdown > a::after { content: ' \25BE'; font-size: 0.7em; }
+    .dropdown-menu {
+      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      background: white; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      min-width: 240px; padding: 0.5rem 0; padding-top: 1rem; margin-top: 0; z-index: 1001;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: 6px; left: 50%;
+      width: 12px; height: 12px; background: white; border-left: 1px solid rgba(0,0,0,0.06);
+      border-top: 1px solid rgba(0,0,0,0.06); transform: translateX(-50%) rotate(45deg);
+    }
+    .nav-dropdown:hover .dropdown-menu { display: block; }
+    .dropdown-menu a { display: block; padding: 0.6rem 1.25rem; font-size: 0.85rem; color: var(--slate); text-decoration: none; font-weight: 500; transition: background 0.15s, color 0.15s; }
+    .dropdown-menu a:hover { background: var(--green-pale); color: var(--green-dark); }
+    .dropdown-menu a.active-link { color: var(--green-mid); font-weight: 600; }
+    .dropdown-menu .dropdown-divider { height: 1px; background: #e8efe8; margin: 0.25rem 0; }
     .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
     .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--green-dark); margin: 5px 0; transition: 0.3s; }
     @media (max-width: 768px) {
@@ -71,6 +89,35 @@
         border-bottom: 1px solid rgba(0,0,0,0.06);
       }
       .nav-links.open { display: flex; }
+      .dropdown-menu { position: static; transform: none; box-shadow: none; border: none; margin-top: 0.25rem; padding-left: 1rem; background: var(--light-bg); border-radius: 8px; }
+      .dropdown-menu::before { display: none; }
+      .nav-dropdown:hover .dropdown-menu { display: none; }
+      .nav-dropdown.open .dropdown-menu { display: block; }
+    }
+
+    /* SECTION NAV */
+    .section-nav {
+      background: var(--white); border-bottom: 1px solid #e8efe8;
+      padding: 0 2rem; position: sticky; top: 62px; z-index: 999;
+    }
+    .section-nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; gap: 0.25rem;
+    }
+    .section-nav-label {
+      font-size: 0.75rem; font-weight: 700; color: var(--green-dark);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-right: 1rem;
+      white-space: nowrap; padding: 0.75rem 0;
+    }
+    .section-nav a {
+      text-decoration: none; color: var(--slate); font-size: 0.82rem;
+      font-weight: 500; padding: 0.75rem 0.9rem; border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+    }
+    .section-nav a:hover { color: var(--green-mid); border-bottom-color: var(--green-light); }
+    @media (max-width: 768px) {
+      .section-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .section-nav-inner { min-width: max-content; }
     }
 
     /* HERO */
@@ -265,25 +312,34 @@
 </head>
 <body>
 
-<!-- NAV -->
+<!-- NAV (matches main site) -->
 <nav id="navbar">
   <div class="nav-inner">
-    <div class="nav-left">
-      <a href="../index.html" class="nav-back">&larr; FOOD Center</a>
-      <a href="../index.html" class="nav-logo">
-        <img src="../logo/logo_final.png" alt="FOOD Center Logo">
-        <span>FOOD Center</span>
-      </a>
-    </div>
+    <a href="../index.html" class="nav-logo">
+      <img src="../logo/logo_final.png" alt="FOOD Center Logo">
+      <span>FOOD Center</span>
+    </a>
     <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links">
-      <li><a href="#highlights">Highlights</a></li>
-      <li><a href="#dashboard">Data</a></li>
-      <li><a href="#sector-profile">Sector Profile</a></li>
-      <li><a href="#solutions">Solutions</a></li>
-      <li><a href="../index.html#get-involved">Get Involved</a></li>
+      <li><a href="../index.html#about">About</a></li>
+      <li class="nav-dropdown" onclick="this.classList.toggle('open')">
+        <a href="../index.html#value-chain">Value Chain</a>
+        <div class="dropdown-menu">
+          <a href="../index.html#value-chain">Overview</a>
+          <div class="dropdown-divider"></div>
+          <a href="../agriculture/index.html" class="active-link">Agriculture</a>
+          <a href="../food-processing/index.html">Food Processing</a>
+          <a href="../storage/index.html" class="active-link">Transportation &amp; Storage</a>
+          <a href="../retail/index.html">Retail &amp; Distribution</a>
+          <a href="../byproducts/index.html">Byproducts &amp; Waste</a>
+          <a href="../crosscutting/index.html">Crosscutting Technologies</a>
+        </div>
+      </li>
+      <li><a href="../index.html#engagement">Engagement</a></li>
+      <li><a href="../index.html#outputs">Outputs</a></li>
+      <li><a href="../index.html#get-involved" class="nav-cta">Get Involved</a></li>
     </ul>
   </div>
 </nav>
@@ -295,7 +351,6 @@
     <div class="hero-eyebrow">FOOD Center &mdash; Subsector Profile</div>
     <h1>Cold Storage &amp; Warehousing</h1>
     <p class="hero-subtitle">Refrigerated Warehousing, On-Farm Storage &amp; Cold Chain Infrastructure | NAICS 493, 4931, 4932</p>
-    <div class="hero-breadcrumb"><a href="../index.html">&larr; Back to FOOD Center</a></div>
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-value" data-target="931" data-comma="true">0</div>
@@ -330,6 +385,17 @@
     </div>
   </div>
 </section>
+
+<!-- SECTION NAV -->
+<div class="section-nav">
+  <div class="section-nav-inner">
+    <span class="section-nav-label">On This Page</span>
+    <a href="#highlights">Key Highlights</a>
+    <a href="#dashboard">Data Dashboard</a>
+    <a href="#sector-profile">Sector Profile</a>
+    <a href="#solutions">Solutions</a>
+  </div>
+</div>
 
 <!-- KEY HIGHLIGHTS -->
 <section id="highlights">
@@ -420,15 +486,6 @@
         <p class="chart-source">Source: Cold storage: NREL OSTI-83583; Others: EIA CBECS 2018. Order-of-magnitude comparison.</p>
       </div>
 
-      <!-- Chart 3: Market Growth -->
-      <div class="chart-card full fade-up">
-        <h3>U.S. Cold Storage Market Growth ($B, CAGR 12.8%)</h3>
-        <p class="chart-subtitle">Projected growth from $43.2B (2024) to $127.7B (2033)</p>
-        <div class="chart-wrap" style="height:300px;">
-          <canvas id="market-area"></canvas>
-        </div>
-        <p class="chart-source">Source: Industry analysis; CAGR 12.8% projection</p>
-      </div>
     </div>
   </div>
 </section>
@@ -800,30 +857,6 @@ function initAllCharts() {
     });
   } catch(e) { console.warn('eui-bar:', e); }
 
-  try {
-    new Chart(document.getElementById('market-area'), {
-      type: 'line',
-      data: {
-        labels: ['2024','2025','2026','2027','2028','2029','2030','2031','2032','2033'],
-        datasets: [{
-          data: [43.2,48.7,55.0,62.0,70.0,79.0,89.1,100.5,113.3,127.7],
-          borderColor: '#2d6a4f', backgroundColor: 'rgba(45,106,79,0.15)',
-          fill: true, tension: 0.3, borderWidth: 3,
-          pointRadius: 4, pointBackgroundColor: '#2d6a4f',
-          pointBorderColor: '#fff', pointBorderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false }, datalabels: { color: '#1a3a2a', font: { weight: 600, size: 10 }, anchor: 'end', align: 'top', offset: 4, formatter: function(v,ctx) { var i=ctx.dataIndex; return (i===0||i===2||i===9) ? '$'+v+'B' : ''; } } },
-        scales: {
-          y: { min: 30, ticks: { callback: function(v) { return '$'+v+'B'; } }, grid: { color: 'rgba(0,0,0,0.05)' } },
-          x: { grid: { display: false }, ticks: { font: { weight: 500 } } }
-        },
-        animation: { duration: 1200 }
-      }
-    });
-  } catch(e) { console.warn('market-area:', e); }
 }
 
 setTimeout(initAllCharts, 300);

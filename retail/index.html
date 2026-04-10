@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retail &amp; Distribution — FOOD Center</title>
+  <link rel="icon" type="image/png" href="../logo/logo_final.png">
+  <script>
+    if (sessionStorage.getItem('food_auth') !== 'true') {
+      window.location.href = '../index.html';
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green-dark: #1a3a2a; --green-mid: #2d6a4f; --green-light: #52b788;
+      --green-pale: #d8f3dc; --gold: #b68d40; --gold-light: #f5e6c8;
+      --navy: #1b2a4a; --slate: #4a5568; --light-bg: #f8faf9; --white: #ffffff;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; color: #2d3748; line-height: 1.7; background: var(--white); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.06); transition: box-shadow 0.3s; }
+    nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+    .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo img { height: 44px; }
+    .nav-logo span { font-weight: 700; font-size: 1.1rem; color: var(--green-dark); letter-spacing: -0.02em; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--slate); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--green-mid); }
+    .nav-cta { background: var(--green-mid); color: white !important; padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 600; transition: background 0.2s; }
+    .nav-cta:hover { background: var(--green-dark); }
+    .nav-dropdown { position: relative; padding-bottom: 0.5rem; margin-bottom: -0.5rem; }
+    .nav-dropdown > a { cursor: pointer; }
+    .nav-dropdown > a::after { content: ' \25BE'; font-size: 0.7em; }
+    .dropdown-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: white; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.12); min-width: 240px; padding: 0.5rem 0; padding-top: 1rem; z-index: 1001; border: 1px solid rgba(0,0,0,0.06); }
+    .dropdown-menu::before { content: ''; position: absolute; top: 6px; left: 50%; width: 12px; height: 12px; background: white; border-left: 1px solid rgba(0,0,0,0.06); border-top: 1px solid rgba(0,0,0,0.06); transform: translateX(-50%) rotate(45deg); }
+    .nav-dropdown:hover .dropdown-menu { display: block; }
+    .dropdown-menu a { display: block; padding: 0.6rem 1.25rem; font-size: 0.85rem; color: var(--slate); text-decoration: none; font-weight: 500; transition: background 0.15s, color 0.15s; }
+    .dropdown-menu a:hover { background: var(--green-pale); color: var(--green-dark); }
+    .dropdown-menu a.active-link { color: var(--green-mid); font-weight: 600; }
+    .dropdown-menu .dropdown-divider { height: 1px; background: #e8efe8; margin: 0.25rem 0; }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--green-dark); margin: 5px 0; transition: 0.3s; }
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; flex-direction: column; padding: 1rem 2rem; gap: 1rem; border-bottom: 1px solid rgba(0,0,0,0.06); }
+      .nav-links.open { display: flex; }
+      .dropdown-menu { position: static; transform: none; box-shadow: none; border: none; margin-top: 0.25rem; padding-left: 1rem; background: var(--light-bg); border-radius: 8px; }
+      .dropdown-menu::before { display: none; }
+      .nav-dropdown:hover .dropdown-menu { display: none; }
+      .nav-dropdown.open .dropdown-menu { display: block; }
+    }
+    .coming-soon {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; padding-top: 70px;
+    }
+    .coming-soon-bg { position: absolute; inset: 0; z-index: 0; }
+    .coming-soon-bg img { width: 100%; height: 100%; object-fit: cover; }
+    .coming-soon-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(26,58,42,0.88) 0%, rgba(27,42,74,0.78) 100%);
+    }
+    .coming-soon-content {
+      position: relative; z-index: 1; text-align: center; max-width: 700px; padding: 2rem;
+    }
+    .coming-soon-eyebrow {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 1rem;
+    }
+    .coming-soon-content h1 {
+      font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 3.4rem);
+      color: white; line-height: 1.15; margin-bottom: 0.75rem;
+    }
+    .coming-soon-content .subtitle {
+      font-size: 1rem; color: rgba(255,255,255,0.75); margin-bottom: 2.5rem; line-height: 1.6;
+    }
+    .coming-soon-badge {
+      display: inline-block; background: rgba(255,255,255,0.12); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.25); border-radius: 50px;
+      padding: 0.8rem 2.5rem; margin-bottom: 2rem;
+    }
+    .coming-soon-badge span {
+      font-family: 'Playfair Display', serif; font-size: 1.6rem;
+      color: var(--gold); font-weight: 700;
+    }
+    .coming-soon-text {
+      font-size: 1.05rem; color: rgba(255,255,255,0.85); line-height: 1.8;
+      max-width: 550px; margin: 0 auto 2.5rem;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem; border-radius: 8px; font-weight: 600; font-size: 1rem;
+      text-decoration: none; background: var(--green-light); color: var(--green-dark);
+      transition: all 0.25s; border: none; cursor: pointer;
+    }
+    .back-btn:hover { background: #40a676; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(82,183,136,0.4); }
+    footer { background: #0f1f17; color: rgba(255,255,255,0.6); padding: 3rem 2rem; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { display: flex; align-items: center; gap: 0.75rem; }
+    .footer-logo img { height: 36px; opacity: 0.8; }
+    .footer-logo span { font-weight: 600; color: rgba(255,255,255,0.8); font-size: 0.95rem; }
+    .footer-text { font-size: 0.85rem; }
+    .footer-text a { color: var(--green-light); text-decoration: none; }
+    .footer-text a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <img src="../logo/logo_final.png" alt="FOOD Center Logo">
+      <span>FOOD Center</span>
+    </a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="../index.html#about">About</a></li>
+      <li class="nav-dropdown" onclick="this.classList.toggle('open')">
+        <a href="../index.html#value-chain">Value Chain</a>
+        <div class="dropdown-menu">
+          <a href="../index.html#value-chain">Overview</a>
+          <div class="dropdown-divider"></div>
+          <a href="../agriculture/index.html" class="active-link">Agriculture</a>
+          <a href="../food-processing/index.html">Food Processing</a>
+          <a href="../storage/index.html" class="active-link">Transportation &amp; Storage</a>
+          <a href="../retail/index.html">Retail &amp; Distribution</a>
+          <a href="../byproducts/index.html">Byproducts &amp; Waste</a>
+          <a href="../crosscutting/index.html">Crosscutting Technologies</a>
+        </div>
+      </li>
+      <li><a href="../index.html#engagement">Engagement</a></li>
+      <li><a href="../index.html#outputs">Outputs</a></li>
+      <li><a href="../index.html#get-involved" class="nav-cta">Get Involved</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="coming-soon">
+  <div class="coming-soon-bg">
+    <img src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=1600&q=80" alt="Grocery store aisle" loading="lazy">
+  </div>
+  <div class="coming-soon-content">
+    <div class="coming-soon-eyebrow">FOOD Center &mdash; Subsector Profile</div>
+    <h1>Retail &amp; Distribution</h1>
+    <p class="subtitle">Grocery, Foodservice &amp; Direct-to-Consumer Channels | NAICS 445, 722</p>
+    <div class="coming-soon-badge"><span>Coming Soon</span></div>
+    <p class="coming-soon-text">This subsector profile is currently under development. Our team is conducting industry research and stakeholder interviews to build a comprehensive analysis of the retail and distribution sector.</p>
+    <a href="../index.html#value-chain" class="back-btn">&larr; Back to Value Chain</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <img src="../logo/logo_final.png" alt="FOOD Center">
+      <span>FOOD Center</span>
+    </div>
+    <div class="footer-text">
+      Food &amp; Beverage Operational Optimization and Deployment Center<br>
+      <a href="https://www.lbl.gov" target="_blank" rel="noopener">Lawrence Berkeley National Laboratory</a>
+    </div>
+  </div>
+</footer>
+<script>
+  var navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', function() { navbar.classList.toggle('scrolled', window.scrollY > 20); });
+</script>
+</body>
+</html>

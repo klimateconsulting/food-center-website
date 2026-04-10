@@ -20,6 +20,9 @@
   <!-- ⚠️ REPLACE 6LeLnK0sAAAAABgO7bYgtJxEglwpsslW7YTKrvI0 with your reCAPTCHA v3 site key -->
   <script src="https://www.google.com/recaptcha/api.js?render=6LeLnK0sAAAAABgO7bYgtJxEglwpsslW7YTKrvI0"></script>
 
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -328,6 +331,39 @@
       padding: 2.5rem;
       margin-bottom: 3rem;
       box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+    }
+
+    /* SANKEY FLOW */
+    .flow-wrapper {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+      border: 1px solid #e8efe8;
+    }
+    .flow-wrapper h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--green-dark);
+      margin-bottom: 0.25rem;
+    }
+    .flow-wrapper .flow-subtitle {
+      font-size: 0.88rem;
+      color: var(--slate);
+      margin-bottom: 1.5rem;
+    }
+    .flow-wrapper svg text { font-family: 'Inter', sans-serif; }
+    .flow-legend {
+      display: flex; gap: 2rem; justify-content: center;
+      margin-top: 1rem; font-size: 0.78rem; color: var(--slate);
+    }
+    .flow-legend span { display: flex; align-items: center; gap: 0.4rem; }
+    .flow-legend .swatch {
+      display: inline-block; width: 28px; height: 4px; border-radius: 2px;
+    }
+    .flow-source {
+      font-size: 0.72rem; color: #a0aec0; margin-top: 0.75rem; text-align: right;
     }
     .infographic-wrapper img {
       width: 100%;
@@ -785,11 +821,11 @@
           <a href="#value-chain">Overview</a>
           <div class="dropdown-divider"></div>
           <a href="agriculture/index.html" class="active-link">Agriculture</a>
-          <a href="#">Food Processing</a>
+          <a href="food-processing/index.html">Food Processing</a>
           <a href="storage/index.html" class="active-link">Transportation &amp; Storage</a>
-          <a href="#">Retail &amp; Distribution</a>
-          <a href="#">Byproducts &amp; Waste</a>
-          <a href="#">Crosscutting Technologies</a>
+          <a href="retail/index.html">Retail &amp; Distribution</a>
+          <a href="byproducts/index.html">Byproducts &amp; Waste</a>
+          <a href="crosscutting/index.html">Crosscutting Technologies</a>
         </div>
       </li>
       <li><a href="#engagement">Engagement</a></li>
@@ -854,6 +890,17 @@
 
     <div class="infographic-wrapper fade-up">
       <img src="images/infographic.png" alt="FOOD Center value chain infographic showing Agriculture, Food Processing, Transportation & Storage, Retail & Distribution, Byproducts & Waste Streams, and Crosscutting Technologies">
+    </div>
+
+    <div class="flow-wrapper fade-up">
+      <h3>Food Value Chain Flow</h3>
+      <p class="flow-subtitle">From farm gate to consumer &mdash; with waste at each stage (ReFED 2022)</p>
+      <div id="sankey-chart"></div>
+      <div class="flow-legend">
+        <span><span class="swatch" style="background:var(--green-mid);"></span> Supply chain flow</span>
+        <span><span class="swatch" style="background:#c53030;"></span> Waste flow</span>
+      </div>
+      <p class="flow-source">Source: ReFED 2022 | Relative units</p>
     </div>
 
     <div class="subsectors fade-up">
@@ -1119,6 +1166,99 @@
   }, { threshold: 0.15 });
 
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // ── SANKEY FLOW CHART ──
+  (function() {
+    var container = document.getElementById('sankey-chart');
+    if (!container || typeof d3 === 'undefined' || typeof d3.sankey === 'undefined') return;
+
+    var sankeyData = {
+      nodes: [
+        { name: 'Farm' }, { name: 'Imports' }, { name: 'Processing' },
+        { name: 'Distribution' }, { name: 'Retail' }, { name: 'Food Service' },
+        { name: 'Consumers' }, { name: 'Food Consumed' },
+        { name: 'Farm Waste' }, { name: 'Processing Waste' },
+        { name: 'Retail Waste' }, { name: 'Food Svc Waste' }, { name: 'Consumer Waste' }
+      ],
+      links: [
+        { source: 0, target: 2, value: 66 },
+        { source: 1, target: 2, value: 28 },
+        { source: 2, target: 3, value: 89 },
+        { source: 3, target: 4, value: 46 },
+        { source: 3, target: 5, value: 43 },
+        { source: 4, target: 6, value: 44 },
+        { source: 5, target: 6, value: 38 },
+        { source: 6, target: 7, value: 65 },
+        { source: 0, target: 8, value: 6 },
+        { source: 2, target: 9, value: 5 },
+        { source: 4, target: 10, value: 2 },
+        { source: 5, target: 11, value: 5 },
+        { source: 6, target: 12, value: 17 }
+      ]
+    };
+
+    var wasteNodes = new Set([8, 9, 10, 11, 12]);
+    var margin = { top: 10, right: 20, bottom: 10, left: 20 };
+    var width = 900, height = 360;
+
+    var svg = d3.select(container).append('svg')
+      .attr('viewBox', '0 0 ' + (width + margin.left + margin.right) + ' ' + (height + margin.top + margin.bottom))
+      .attr('preserveAspectRatio', 'xMidYMid meet')
+      .style('width', '100%').style('height', 'auto')
+      .append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    var sankey = d3.sankey()
+      .nodeId(function(d) { return d.index; })
+      .nodeWidth(20)
+      .nodePadding(18)
+      .nodeAlign(d3.sankeyJustify)
+      .extent([[0, 0], [width, height]]);
+
+    var graph = sankey({
+      nodes: sankeyData.nodes.map(function(d) { return Object.assign({}, d); }),
+      links: sankeyData.links.map(function(d) { return Object.assign({}, d); })
+    });
+
+    // Links
+    svg.append('g').selectAll('path')
+      .data(graph.links).join('path')
+      .attr('d', d3.sankeyLinkHorizontal())
+      .attr('fill', 'none')
+      .attr('stroke', function(d) { return wasteNodes.has(d.target.index) ? '#c53030' : '#52b788'; })
+      .attr('stroke-opacity', function(d) { return wasteNodes.has(d.target.index) ? 0.35 : 0.4; })
+      .attr('stroke-width', function(d) { return Math.max(1, d.width); });
+
+    // Nodes
+    svg.append('g').selectAll('rect')
+      .data(graph.nodes).join('rect')
+      .attr('x', function(d) { return d.x0; })
+      .attr('y', function(d) { return d.y0; })
+      .attr('height', function(d) { return Math.max(1, d.y1 - d.y0); })
+      .attr('width', function(d) { return d.x1 - d.x0; })
+      .attr('fill', function(d) { return wasteNodes.has(d.index) ? '#c53030' : '#2d6a4f'; })
+      .attr('rx', 3);
+
+    // Labels
+    svg.append('g').selectAll('text')
+      .data(graph.nodes).join('text')
+      .attr('x', function(d) { return d.x0 < width / 2 ? d.x1 + 8 : d.x0 - 8; })
+      .attr('y', function(d) { return (d.y0 + d.y1) / 2; })
+      .attr('dy', '0.35em')
+      .attr('text-anchor', function(d) { return d.x0 < width / 2 ? 'start' : 'end'; })
+      .attr('font-size', '12px')
+      .attr('font-weight', '600')
+      .attr('fill', function(d) { return wasteNodes.has(d.index) ? '#c53030' : '#1a3a2a'; })
+      .text(function(d) {
+        var label = d.name;
+        // Add value for waste nodes
+        if (wasteNodes.has(d.index)) {
+          var wasteVal = 0;
+          d.targetLinks.forEach(function(l) { wasteVal += l.value; });
+          label += ' (' + wasteVal + ')';
+        }
+        return label;
+      });
+  })();
 
   var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzPNH5PRUmzxQ3s0H71cc_oOS8IwF-dlwYbRWv5bLN0kr8PwmoQBrWlNd7bAamj1GmlQ/exec';
   var RECAPTCHA_SITE_KEY = '6LeLnK0sAAAAABgO7bYgtJxEglwpsslW7YTKrvI0';

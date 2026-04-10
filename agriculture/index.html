@@ -53,21 +53,39 @@
       max-width: 1200px; margin: 0 auto; padding: 0.75rem 2rem;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .nav-left { display: flex; align-items: center; gap: 1rem; }
-    .nav-back {
-      text-decoration: none; color: var(--green-mid); font-size: 0.85rem;
-      font-weight: 600; white-space: nowrap; transition: color 0.2s;
-    }
-    .nav-back:hover { color: var(--green-dark); }
     .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
     .nav-logo img { height: 44px; }
     .nav-logo span { font-weight: 700; font-size: 1.1rem; color: var(--green-dark); letter-spacing: -0.02em; }
-    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
     .nav-links a {
-      text-decoration: none; color: var(--slate); font-size: 0.85rem;
+      text-decoration: none; color: var(--slate); font-size: 0.9rem;
       font-weight: 500; transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--green-mid); }
+    .nav-cta {
+      background: var(--green-mid); color: white !important;
+      padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 600; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--green-dark); }
+    .nav-dropdown { position: relative; padding-bottom: 0.5rem; margin-bottom: -0.5rem; }
+    .nav-dropdown > a { cursor: pointer; }
+    .nav-dropdown > a::after { content: ' \25BE'; font-size: 0.7em; }
+    .dropdown-menu {
+      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      background: white; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      min-width: 240px; padding: 0.5rem 0; padding-top: 1rem; margin-top: 0; z-index: 1001;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: 6px; left: 50%;
+      width: 12px; height: 12px; background: white; border-left: 1px solid rgba(0,0,0,0.06);
+      border-top: 1px solid rgba(0,0,0,0.06); transform: translateX(-50%) rotate(45deg);
+    }
+    .nav-dropdown:hover .dropdown-menu { display: block; }
+    .dropdown-menu a { display: block; padding: 0.6rem 1.25rem; font-size: 0.85rem; color: var(--slate); text-decoration: none; font-weight: 500; transition: background 0.15s, color 0.15s; }
+    .dropdown-menu a:hover { background: var(--green-pale); color: var(--green-dark); }
+    .dropdown-menu a.active-link { color: var(--green-mid); font-weight: 600; }
+    .dropdown-menu .dropdown-divider { height: 1px; background: #e8efe8; margin: 0.25rem 0; }
     .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
     .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--green-dark); margin: 5px 0; transition: 0.3s; }
     @media (max-width: 768px) {
@@ -78,6 +96,35 @@
         border-bottom: 1px solid rgba(0,0,0,0.06);
       }
       .nav-links.open { display: flex; }
+      .dropdown-menu { position: static; transform: none; box-shadow: none; border: none; margin-top: 0.25rem; padding-left: 1rem; background: var(--light-bg); border-radius: 8px; }
+      .dropdown-menu::before { display: none; }
+      .nav-dropdown:hover .dropdown-menu { display: none; }
+      .nav-dropdown.open .dropdown-menu { display: block; }
+    }
+
+    /* SECTION NAV (sticky sub-navigation) */
+    .section-nav {
+      background: var(--white); border-bottom: 1px solid #e8efe8;
+      padding: 0 2rem; position: sticky; top: 62px; z-index: 999;
+    }
+    .section-nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; gap: 0.25rem;
+    }
+    .section-nav-label {
+      font-size: 0.75rem; font-weight: 700; color: var(--green-dark);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-right: 1rem;
+      white-space: nowrap; padding: 0.75rem 0;
+    }
+    .section-nav a {
+      text-decoration: none; color: var(--slate); font-size: 0.82rem;
+      font-weight: 500; padding: 0.75rem 0.9rem; border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+    }
+    .section-nav a:hover { color: var(--green-mid); border-bottom-color: var(--green-light); }
+    @media (max-width: 768px) {
+      .section-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .section-nav-inner { min-width: max-content; }
     }
 
     /* HERO */
@@ -203,6 +250,18 @@
     .chart-card .chart-source { font-size: 0.72rem; color: #a0aec0; margin-top: 0.75rem; }
     .chart-wrap { position: relative; width: 100%; }
     .chart-wrap canvas { width: 100% !important; }
+    .map-toggles {
+      display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.25rem;
+    }
+    .map-toggle {
+      padding: 0.4rem 1rem; border-radius: 50px; border: 1.5px solid #d4ddd4;
+      background: white; color: var(--slate); font-family: inherit;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .map-toggle.active {
+      background: var(--green-mid); color: white; border-color: var(--green-mid);
+    }
+    .map-toggle:hover:not(.active) { border-color: var(--green-mid); color: var(--green-mid); }
     .map-container { width: 100%; }
     .map-container svg { width: 100%; height: auto; }
     .map-tooltip {
@@ -289,25 +348,34 @@
 </head>
 <body>
 
-<!-- NAV -->
+<!-- NAV (matches main site) -->
 <nav id="navbar">
   <div class="nav-inner">
-    <div class="nav-left">
-      <a href="../index.html" class="nav-back">&larr; FOOD Center</a>
-      <a href="../index.html" class="nav-logo">
-        <img src="../logo/logo_final.png" alt="FOOD Center Logo">
-        <span>FOOD Center</span>
-      </a>
-    </div>
+    <a href="../index.html" class="nav-logo">
+      <img src="../logo/logo_final.png" alt="FOOD Center Logo">
+      <span>FOOD Center</span>
+    </a>
     <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links">
-      <li><a href="#highlights">Highlights</a></li>
-      <li><a href="#dashboard">Data</a></li>
-      <li><a href="#sector-profile">Sector Profile</a></li>
-      <li><a href="#solutions">Solutions</a></li>
-      <li><a href="../index.html#get-involved">Get Involved</a></li>
+      <li><a href="../index.html#about">About</a></li>
+      <li class="nav-dropdown" onclick="this.classList.toggle('open')">
+        <a href="../index.html#value-chain">Value Chain</a>
+        <div class="dropdown-menu">
+          <a href="../index.html#value-chain">Overview</a>
+          <div class="dropdown-divider"></div>
+          <a href="../agriculture/index.html" class="active-link">Agriculture</a>
+          <a href="../food-processing/index.html">Food Processing</a>
+          <a href="../storage/index.html" class="active-link">Transportation &amp; Storage</a>
+          <a href="../retail/index.html">Retail &amp; Distribution</a>
+          <a href="../byproducts/index.html">Byproducts &amp; Waste</a>
+          <a href="../crosscutting/index.html">Crosscutting Technologies</a>
+        </div>
+      </li>
+      <li><a href="../index.html#engagement">Engagement</a></li>
+      <li><a href="../index.html#outputs">Outputs</a></li>
+      <li><a href="../index.html#get-involved" class="nav-cta">Get Involved</a></li>
     </ul>
   </div>
 </nav>
@@ -321,7 +389,6 @@
     <div class="hero-eyebrow">FOOD Center &mdash; Subsector Profile</div>
     <h1>U.S. Agriculture</h1>
     <p class="hero-subtitle">Conventional Agriculture &amp; Controlled Environment Agriculture | NAICS 111, 112, 1114</p>
-    <div class="hero-breadcrumb"><a href="../index.html">&larr; Back to FOOD Center</a></div>
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-value" data-target="513.5" data-prefix="$" data-suffix="B">$0</div>
@@ -357,6 +424,17 @@
   </div>
 </section>
 
+<!-- SECTION NAV -->
+<div class="section-nav">
+  <div class="section-nav-inner">
+    <span class="section-nav-label">On This Page</span>
+    <a href="#highlights">Key Highlights</a>
+    <a href="#dashboard">Data Dashboard</a>
+    <a href="#sector-profile">Sector Profile</a>
+    <a href="#solutions">Solutions</a>
+  </div>
+</div>
+
 <!-- KEY HIGHLIGHTS -->
 <section id="highlights">
   <div class="container">
@@ -385,12 +463,6 @@
       <p><strong>"The top 4.7% of farms (89,210 operations) account for 75% of all sales &mdash; the top 3,785 farms account for 25%."</strong></p>
     </div>
 
-    <div class="inline-chart-wrap fade-up">
-      <canvas id="highlights-donut" width="220" height="220"></canvas>
-      <div>
-        <p style="font-size:0.9rem; color:var(--slate);">Crop receipts: <strong>$244.9B</strong><br>Livestock receipts: <strong>$268.6B</strong></p>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -404,10 +476,20 @@
     </div>
 
     <div class="chart-grid">
-      <!-- Chart 1: US Map -->
+      <!-- Chart 1: US Map with toggles -->
       <div class="chart-card full fade-up">
-        <h3>Farm Market Value by State (2022 Ag Census)</h3>
-        <p class="chart-subtitle">Total market value of all agricultural products sold</p>
+        <h3 id="map-title">Farm Market Value by State (2022 Ag Census)</h3>
+        <p class="chart-subtitle" id="map-subtitle">Total market value of all agricultural products sold</p>
+        <div class="map-toggles" id="map-toggles">
+          <button class="map-toggle active" data-metric="total">Total Market Value</button>
+          <button class="map-toggle" data-metric="corn">Corn</button>
+          <button class="map-toggle" data-metric="soybeans">Soybeans</button>
+          <button class="map-toggle" data-metric="wheat">Wheat</button>
+          <button class="map-toggle" data-metric="cattle">Cattle</button>
+          <button class="map-toggle" data-metric="milk">Dairy</button>
+          <button class="map-toggle" data-metric="hogs">Hogs</button>
+          <button class="map-toggle" data-metric="cotton">Cotton</button>
+        </div>
         <div class="map-container" id="us-map"></div>
         <div class="map-tooltip" id="map-tooltip"></div>
         <div class="chart-wrap" style="height:300px; margin-top:1.5rem;">
@@ -765,21 +847,6 @@ Chart.defaults.font.family = "'Inter', sans-serif";
 
 // ── INIT ALL CHARTS ──
 function initAllCharts() {
-  // Highlights donut (Crop vs Livestock)
-  try {
-    new Chart(document.getElementById('highlights-donut'), {
-      type: 'doughnut',
-      data: {
-        labels: ['Crop Receipts ($244.9B)', 'Livestock Receipts ($268.6B)'],
-        datasets: [{ data: [244.9, 268.6], backgroundColor: ['#52b788', '#b68d40'], borderWidth: 0 }]
-      },
-      options: {
-        responsive: false, maintainAspectRatio: true, cutout: '60%',
-        plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 16 } }, datalabels: { display: false } },
-        animation: { duration: 1200 }
-      }
-    });
-  } catch(e) { console.warn('highlights-donut:', e); }
 
   // Revenue Bar
   try {
@@ -825,44 +892,44 @@ function initAllCharts() {
 // Init charts after a short delay to ensure DOM is settled
 setTimeout(initAllCharts, 300);
 
-// ── D3 US MAP ──
+// ── D3 US MAP WITH TOGGLES ──
 (function() {
   var mapContainer = document.getElementById('us-map');
   if (!mapContainer) return;
 
-  var farmDataUrl = '../old_fnb_dashboard/_dashboard/frontend/dist/data/farm_data.json';
-  var topoUrl = 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json';
+  var farmDataUrl = '../data/farm_data.json';
+  var stateTopoUrl = 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json';
+  var countyTopoUrl = 'https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json';
 
-  // Fetch both data sources separately for better error handling
-  var topoPromise = fetch(topoUrl).then(function(r) { return r.json(); });
-  var farmPromise = fetch(farmDataUrl).then(function(r) { return r.json(); });
+  var metricLabels = {
+    total: { title: 'Farm Market Value by State (2022 Ag Census)', sub: 'Total market value of all agricultural products sold', unit: '' },
+    corn: { title: 'Corn Production by County', sub: 'Market value of corn sold — 2022 Census of Agriculture', unit: 'corn' },
+    soybeans: { title: 'Soybean Production by County', sub: 'Market value of soybeans sold — 2022 Census of Agriculture', unit: 'soybeans' },
+    wheat: { title: 'Wheat Production by County', sub: 'Market value of wheat sold — 2022 Census of Agriculture', unit: 'wheat' },
+    cattle: { title: 'Cattle & Calves by County', sub: 'Market value of cattle and calves sold — 2022 Census of Agriculture', unit: 'cattle' },
+    milk: { title: 'Dairy Production by County', sub: 'Market value of milk from cows sold — 2022 Census of Agriculture', unit: 'dairy' },
+    hogs: { title: 'Hog Production by County', sub: 'Market value of hogs and pigs sold — 2022 Census of Agriculture', unit: 'hogs' },
+    cotton: { title: 'Cotton Production by County', sub: 'Market value of cotton sold — 2022 Census of Agriculture', unit: 'cotton' }
+  };
 
-  Promise.all([topoPromise, farmPromise]).then(function(results) {
-    var us = results[0];
-    var farmData = results[1];
+  // Fetch all data
+  Promise.all([
+    fetch(stateTopoUrl).then(function(r) { return r.json(); }),
+    fetch(countyTopoUrl).then(function(r) { return r.json(); }),
+    fetch(farmDataUrl).then(function(r) { return r.json(); })
+  ]).then(function(results) {
+    var usStates = results[0];
+    var usCounties = results[1];
+    var farmData = results[2];
 
-    // Check that topojson is defined before using it
     if (typeof topojson === 'undefined') {
-      console.error('topojson not loaded');
       mapContainer.innerHTML = '<p style="text-align:center;color:var(--slate);padding:2rem;">TopoJSON library failed to load.</p>';
       return;
     }
 
-    try {
-      var states = topojson.feature(us, us.objects.states);
-    } catch(e) {
-      console.error('topojson.feature() failed:', e);
-      mapContainer.innerHTML = '<p style="text-align:center;color:var(--slate);padding:2rem;">Map data could not be processed.</p>';
-      return;
-    }
-
-    var stateValues = {};
-    farmData.byState.forEach(function(s) {
-      stateValues[s.stateFips] = { value: s.value, name: s.name };
-    });
-
-    var values = Object.values(stateValues).map(function(d) { return d.value; }).filter(function(v) { return v > 0; });
-    var colorScale = d3.scaleQuantile().domain(values).range(['#d8f3dc', '#95d5b2', '#52b788', '#2d6a4f', '#1a3a2a']);
+    var statesGeo = topojson.feature(usStates, usStates.objects.states);
+    var countiesGeo = topojson.feature(usCounties, usCounties.objects.counties);
+    var stateBorders = topojson.mesh(usCounties, usCounties.objects.states, function(a, b) { return a !== b; });
 
     var width = 960, height = 600;
     var svg = d3.select(mapContainer).append('svg')
@@ -870,65 +937,145 @@ setTimeout(initAllCharts, 300);
       .attr('preserveAspectRatio', 'xMidYMid meet')
       .style('width', '100%').style('height', 'auto');
 
-    var projection = d3.geoAlbersUsa().fitSize([width, height], states);
-    var path = d3.geoPath().projection(projection);
+    var projection = d3.geoAlbersUsa().fitSize([width, height], statesGeo);
+    var pathGen = d3.geoPath().projection(projection);
     var tooltip = document.getElementById('map-tooltip');
+    var topBarChart = null;
 
-    svg.selectAll('path')
-      .data(states.features).join('path')
-      .attr('d', path)
-      .attr('fill', function(d) { return stateValues[d.id] ? colorScale(stateValues[d.id].value) : '#e8efe8'; })
-      .attr('stroke', '#fff').attr('stroke-width', 0.8)
-      .style('cursor', 'pointer')
-      .on('mouseover', function(event, d) {
-        var info = stateValues[d.id];
-        if (info) {
-          var valB = (info.value / 1e9).toFixed(1);
-          var name = info.name.charAt(0) + info.name.slice(1).toLowerCase();
-          tooltip.innerHTML = '<strong>' + name + '</strong><br>$' + valB + 'B market value';
-          tooltip.style.opacity = '1';
-        }
-        d3.select(this).attr('stroke', '#b68d40').attr('stroke-width', 2);
-      })
-      .on('mousemove', function(event) {
-        var rect = mapContainer.getBoundingClientRect();
-        tooltip.style.left = (event.clientX - rect.left + 12) + 'px';
-        tooltip.style.top = (event.clientY - rect.top - 10) + 'px';
-      })
-      .on('mouseout', function() {
-        tooltip.style.opacity = '0';
-        d3.select(this).attr('stroke', '#fff').attr('stroke-width', 0.8);
-      });
+    // Layers
+    var countyLayer = svg.append('g').attr('class', 'county-layer').style('display', 'none');
+    var stateLayer = svg.append('g').attr('class', 'state-layer');
+    var borderLayer = svg.append('g').attr('class', 'border-layer');
+    var legendGroup = svg.append('g').attr('transform', 'translate(' + (width - 200) + ',' + (height - 80) + ')');
 
-    // Legend
-    var legendColors = colorScale.range();
-    var legend = svg.append('g').attr('transform', 'translate(' + (width - 200) + ',' + (height - 80) + ')');
-    legendColors.forEach(function(color, i) {
-      legend.append('rect').attr('x', i * 32).attr('y', 0).attr('width', 30).attr('height', 12).attr('fill', color).attr('rx', 2);
-    });
-    legend.append('text').attr('x', 0).attr('y', 26).text('Low').attr('font-size', '10px').attr('fill', '#4a5568');
-    legend.append('text').attr('x', legendColors.length * 32 - 20).attr('y', 26).text('High').attr('font-size', '10px').attr('fill', '#4a5568');
+    // Pre-draw county paths (hidden initially)
+    countyLayer.selectAll('path').data(countiesGeo.features).join('path')
+      .attr('d', pathGen).attr('fill', '#e8efe8').attr('stroke', 'none');
 
-    // Top 5 states bar chart
-    var sorted = farmData.byState.sort(function(a,b) { return b.value - a.value; }).slice(0, 5);
-    var barCtx = document.getElementById('top-states-bar');
-    if (barCtx) {
-      try {
-        new Chart(barCtx, {
-          type: 'bar',
-          data: {
-            labels: sorted.map(function(s) { return s.name.charAt(0) + s.name.slice(1).toLowerCase(); }),
-            datasets: [{ data: sorted.map(function(s) { return +(s.value / 1e9).toFixed(1); }), backgroundColor: ['#1a3a2a','#2d6a4f','#2d6a4f','#52b788','#52b788'], borderRadius: 6 }]
-          },
-          options: {
-            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#2d3748', font: { weight: 600, size: 12 }, formatter: function(v) { return '$'+v+'B'; } } },
-            scales: { x: { display: false }, y: { grid: { display: false }, ticks: { font: { size: 13 } } } },
-            animation: { duration: 1200 }
-          }
-        });
-      } catch(e) { console.warn('top-states-bar:', e); }
+    // Pre-draw state paths
+    stateLayer.selectAll('path').data(statesGeo.features).join('path')
+      .attr('d', pathGen).attr('fill', '#e8efe8').attr('stroke', '#fff').attr('stroke-width', 0.8);
+
+    // State borders for county view
+    borderLayer.append('path').datum(stateBorders)
+      .attr('d', pathGen).attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 0.6).style('display', 'none');
+
+    function titleCase(s) { return s.charAt(0) + s.slice(1).toLowerCase(); }
+
+    function formatVal(v) {
+      if (v >= 1e9) return '$' + (v / 1e9).toFixed(1) + 'B';
+      if (v >= 1e6) return '$' + (v / 1e6).toFixed(0) + 'M';
+      if (v >= 1e3) return '$' + (v / 1e3).toFixed(0) + 'K';
+      return '$' + v;
     }
+
+    function drawLegend(colorScale) {
+      legendGroup.selectAll('*').remove();
+      var colors = colorScale.range();
+      colors.forEach(function(color, i) {
+        legendGroup.append('rect').attr('x', i * 32).attr('y', 0).attr('width', 30).attr('height', 12).attr('fill', color).attr('rx', 2);
+      });
+      legendGroup.append('text').attr('x', 0).attr('y', 26).text('Low').attr('font-size', '10px').attr('fill', '#4a5568');
+      legendGroup.append('text').attr('x', colors.length * 32 - 20).attr('y', 26).text('High').attr('font-size', '10px').attr('fill', '#4a5568');
+    }
+
+    function updateTopBar(items, label) {
+      var sorted = items.sort(function(a, b) { return b.value - a.value; }).slice(0, 5);
+      var barCtx = document.getElementById('top-states-bar');
+      if (topBarChart) { topBarChart.destroy(); topBarChart = null; }
+      if (!barCtx) return;
+      topBarChart = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+          labels: sorted.map(function(s) { return titleCase(s.name); }),
+          datasets: [{ data: sorted.map(function(s) { return +(s.value / 1e6).toFixed(1); }), backgroundColor: ['#1a3a2a','#2d6a4f','#2d6a4f','#52b788','#52b788'], borderRadius: 6 }]
+        },
+        options: {
+          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#2d3748', font: { weight: 600, size: 11 }, formatter: function(v) { return v >= 1000 ? '$' + (v/1000).toFixed(1) + 'B' : '$' + v + 'M'; } } },
+          scales: { x: { display: false }, y: { grid: { display: false }, ticks: { font: { size: 12 } } } },
+          animation: { duration: 800 }
+        }
+      });
+    }
+
+    function showMetric(metric) {
+      var info = metricLabels[metric];
+      document.getElementById('map-title').textContent = info.title;
+      document.getElementById('map-subtitle').textContent = info.sub;
+
+      if (metric === 'total') {
+        // State-level view
+        stateLayer.style('display', null);
+        countyLayer.style('display', 'none');
+        borderLayer.select('path').style('display', 'none');
+
+        var lookup = {};
+        farmData.byState.forEach(function(s) { lookup[s.stateFips] = s; });
+        var vals = farmData.byState.map(function(s) { return s.value; }).filter(function(v) { return v > 0; });
+        var cs = d3.scaleQuantile().domain(vals).range(['#d8f3dc', '#95d5b2', '#52b788', '#2d6a4f', '#1a3a2a']);
+
+        stateLayer.selectAll('path')
+          .attr('fill', function(d) { return lookup[d.id] ? cs(lookup[d.id].value) : '#e8efe8'; })
+          .attr('stroke', '#fff').attr('stroke-width', 0.8)
+          .on('mouseover', function(event, d) {
+            var s = lookup[d.id];
+            if (s) { tooltip.innerHTML = '<strong>' + titleCase(s.name) + '</strong><br>' + formatVal(s.value); tooltip.style.opacity = '1'; }
+            d3.select(this).attr('stroke', '#b68d40').attr('stroke-width', 2);
+          })
+          .on('mousemove', function(event) { var r = mapContainer.getBoundingClientRect(); tooltip.style.left = (event.clientX - r.left + 12) + 'px'; tooltip.style.top = (event.clientY - r.top - 10) + 'px'; })
+          .on('mouseout', function() { tooltip.style.opacity = '0'; d3.select(this).attr('stroke', '#fff').attr('stroke-width', 0.8); });
+
+        drawLegend(cs);
+        updateTopBar(farmData.byState.map(function(s) { return { name: s.name, value: s.value }; }), 'States');
+
+      } else {
+        // County-level view
+        stateLayer.style('display', 'none');
+        countyLayer.style('display', null);
+        borderLayer.select('path').style('display', null);
+
+        var commodityData = farmData.byCommodity[metric] || [];
+        var lookup = {};
+        commodityData.forEach(function(c) { lookup[c.countyFips] = c; });
+        var vals = commodityData.map(function(c) { return c.value; }).filter(function(v) { return v > 0; });
+
+        if (vals.length === 0) {
+          countyLayer.selectAll('path').attr('fill', '#e8efe8');
+          drawLegend(d3.scaleQuantile().domain([0,1]).range(['#e8efe8']));
+          return;
+        }
+
+        var cs = d3.scaleQuantile().domain(vals).range(['#f0f7f0', '#d8f3dc', '#95d5b2', '#52b788', '#2d6a4f', '#1a3a2a']);
+
+        countyLayer.selectAll('path')
+          .attr('fill', function(d) { return lookup[d.id] ? cs(lookup[d.id].value) : '#f5f5f5'; })
+          .on('mouseover', function(event, d) {
+            var c = lookup[d.id];
+            if (c) { tooltip.innerHTML = '<strong>' + titleCase(c.name) + ' County</strong><br>' + formatVal(c.value); tooltip.style.opacity = '1'; }
+            d3.select(this).attr('stroke', '#b68d40').attr('stroke-width', 1.5);
+          })
+          .on('mousemove', function(event) { var r = mapContainer.getBoundingClientRect(); tooltip.style.left = (event.clientX - r.left + 12) + 'px'; tooltip.style.top = (event.clientY - r.top - 10) + 'px'; })
+          .on('mouseout', function() { tooltip.style.opacity = '0'; d3.select(this).attr('stroke', 'none'); });
+
+        drawLegend(cs);
+        // Top 5 counties bar
+        updateTopBar(commodityData.map(function(c) { return { name: c.name, value: c.value }; }), 'Counties');
+      }
+    }
+
+    // Initial render
+    showMetric('total');
+
+    // Toggle button handlers
+    document.querySelectorAll('.map-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.map-toggle').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        showMetric(btn.dataset.metric);
+      });
+    });
+
   }).catch(function(err) {
     console.error('Map data failed to load:', err);
     mapContainer.innerHTML = '<p style="text-align:center;color:var(--slate);padding:2rem;">Map data could not be loaded. Error: ' + err.message + '</p>';
