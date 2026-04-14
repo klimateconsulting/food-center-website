@@ -122,8 +122,8 @@
 
     /* HERO */
     .hero {
-      position: relative; min-height: 100vh; display: flex;
-      align-items: center; justify-content: center; overflow: hidden; padding-top: 70px;
+      position: relative; min-height: 55vh; display: flex;
+      align-items: center; justify-content: center; overflow: hidden; padding: 120px 2rem 80px;
     }
     .hero-bg {
       position: absolute; inset: 0; z-index: 0;
@@ -194,9 +194,15 @@
 
     /* QUICK STATS */
     .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
-    .stat-card { background: var(--light-bg); border-radius: 12px; padding: 1.25rem; text-align: center; border: 1px solid #e8efe8; }
+    .stat-card { background: var(--light-bg); border-radius: 12px; padding: 1.25rem; text-align: center; border: 1px solid #e8efe8; transition: transform 0.2s, box-shadow 0.2s; }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
     .stat-card .val { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--green-dark); font-weight: 700; }
     .stat-card .lbl { font-size: 0.82rem; color: var(--slate); margin-top: 0.25rem; }
+    .challenges-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 1rem; }
+    .challenge-card { background: white; border: 1px solid #e8efe8; border-radius: 14px; padding: 1.5rem; transition: transform 0.3s, box-shadow 0.3s; }
+    .challenge-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+    .challenge-card h4 { color: var(--green-dark); font-size: 1rem; margin-bottom: 0.5rem; }
+    .challenge-card p { font-size: 0.88rem; color: var(--slate); line-height: 1.7; }
     @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
 
     /* CHALLENGE TABLE */
@@ -269,6 +275,16 @@
       padding: 1rem 1.25rem; border-radius: 8px; margin: 1rem 0;
       font-style: italic; font-size: 0.92rem; color: var(--green-dark); line-height: 1.7;
     }
+    .cite { font-size: 0.7em; vertical-align: super; margin-left: 1px; }
+    .cite a { color: var(--green-mid); text-decoration: none; font-weight: 600; }
+    .cite a:hover { text-decoration: underline; }
+    .references-list li { margin-bottom: 0.6rem; font-size: 0.85rem; }
+    .broken-link {
+      display: inline-block; padding: 0.1rem 0.5rem; background: #fed7d7; color: #c53030;
+      border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.25rem;
+    }
+    .references-list a { color: var(--green-mid); text-decoration: none; word-break: break-word; }
+    .references-list a:hover { text-decoration: underline; color: var(--green-dark); }
 
     /* TRL */
     .trl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
@@ -351,38 +367,6 @@
     <div class="hero-eyebrow">FOOD Center &mdash; Subsector Profile</div>
     <h1>Cold Storage &amp; Warehousing</h1>
     <p class="hero-subtitle">Refrigerated Warehousing, On-Farm Storage &amp; Cold Chain Infrastructure | NAICS 493, 4931, 4932</p>
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="931" data-comma="true">0</div>
-        <div class="kpi-label">Refrigerated Facilities</div>
-        <div class="kpi-source">USDA NASS Feb 2026</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="3.99" data-suffix="B ft&sup3;">0</div>
-        <div class="kpi-label">Gross Capacity (3.25B ft&sup3; usable)</div>
-        <div class="kpi-source">USDA NASS Feb 2026</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="43.2" data-prefix="$" data-suffix="B">$0</div>
-        <div class="kpi-label">U.S. Cold Storage Market (2024)</div>
-        <div class="kpi-source">&rarr; $127.7B by 2033</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="85.3" data-suffix=" kBtu/ft&sup2;/yr">0</div>
-        <div class="kpi-label">Electricity EUI</div>
-        <div class="kpi-source">4&ndash;5&times; avg warehouse | NREL</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="37" data-suffix="&ndash;42 yrs">0</div>
-        <div class="kpi-label">Avg Facility Age</div>
-        <div class="kpi-source">&gt;78% built before 2000</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="15" data-suffix="&times;">0</div>
-        <div class="kpi-label">Performance Gap</div>
-        <div class="kpi-source">26 to 379 kWh/m&sup3;/yr</div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -406,52 +390,36 @@
       <div class="green-underline"></div>
     </div>
 
-    <div class="fade-up">
-      <div class="stats-grid">
-        <div class="stat-card"><div class="val">931</div><div class="lbl">Facilities</div></div>
-        <div class="stat-card"><div class="val">3.99B ft&sup3;</div><div class="lbl">Gross Capacity</div></div>
-        <div class="stat-card"><div class="val">$7.5B</div><div class="lbl">Gross Output</div></div>
-        <div class="stat-card"><div class="val">85.3</div><div class="lbl">kBtu/ft&sup2;/yr EUI</div></div>
-        <div class="stat-card"><div class="val">60&ndash;80%</div><div class="lbl">Electricity &rarr; Refrigeration</div></div>
-        <div class="stat-card"><div class="val">73,900</div><div class="lbl">Workers</div></div>
-      </div>
+    <div class="stats-grid fade-up">
+      <div class="stat-card"><div class="val">931</div><div class="lbl">Refrigerated Facilities</div></div>
+      <div class="stat-card"><div class="val">3.99B ft&sup3;</div><div class="lbl">Gross Capacity</div></div>
+      <div class="stat-card"><div class="val">$43.2B</div><div class="lbl">U.S. Cold Storage Market (2024)</div></div>
+      <div class="stat-card"><div class="val">$7.5B</div><div class="lbl">Gross Output</div></div>
+      <div class="stat-card"><div class="val">85.3 kBtu/ft&sup2;/yr</div><div class="lbl">Electricity EUI</div></div>
+      <div class="stat-card"><div class="val">60&ndash;80%</div><div class="lbl">Electricity &rarr; Refrigeration</div></div>
+      <div class="stat-card"><div class="val">73,900</div><div class="lbl">Workers</div></div>
+      <div class="stat-card"><div class="val">37&ndash;42 yrs</div><div class="lbl">Avg Facility Age</div></div>
+      <div class="stat-card"><div class="val">15&times;</div><div class="lbl">Performance Gap</div></div>
+    </div>
 
-      <h3 style="font-size:1.05rem; color:var(--green-dark); margin:1.5rem 0 1rem;">Key Challenges</h3>
-      <div style="overflow-x:auto;">
-        <table class="challenges-table" id="challenges-table">
-          <thead><tr><th>Challenge</th><th>Severity</th></tr></thead>
-          <tbody>
-            <tr class="challenge-row" data-detail="Refrigeration systems consume 60&ndash;80% of total facility electricity. Peak demand charges can exceed $15K&ndash;$50K+/month. Load factor optimization and thermal energy storage are critical paths.">
-              <td>High &amp; Peaky Electricity (Refrigeration-Dominated)</td>
-              <td><span class="severity-badge severity-critical">Critical</span></td>
-            </tr>
-            <tr class="challenge-row" data-detail="EPA AIM Act mandates 85% HFC reduction by 2036. GWP &le; 300 required for new equipment from 2025. R-404A (GWP 3,922) must be replaced. Ammonia and CO&#8322; systems are alternatives but require capital investment.">
-              <td>Refrigerant Transition &mdash; AIM Act HFC Phasedown</td>
-              <td><span class="severity-badge severity-critical">Critical</span></td>
-            </tr>
-            <tr class="challenge-row" data-detail="78%+ of facilities built before 2000. Average age 37&ndash;42 years. Insulation degradation, legacy ammonia piping, and outdated controls create a 15&times; performance gap between best and worst performers.">
-              <td>Aging Infrastructure &amp; Construction Gap</td>
-              <td><span class="severity-badge severity-high">High</span></td>
-            </tr>
-            <tr class="challenge-row" data-detail="~30&ndash;40% of food supply is lost or wasted. Cold chain breaks — particularly at handoff points — are a major contributor. Rural and underserved communities in 21 states face cold chain network deficits.">
-              <td>Food Loss &amp; Cold Chain Gaps</td>
-              <td><span class="severity-badge severity-high">High</span></td>
-            </tr>
-            <tr class="challenge-row" data-detail="Sub-zero environments deter workers. Turnover exceeds 40% annually. Full AS/RS automation costs $30&ndash;80M — prohibitive for mid-size operators. Robotics-as-a-Service models are emerging.">
-              <td>Labor Shortages &amp; Automation Barriers</td>
-              <td><span class="severity-badge severity-high">High</span></td>
-            </tr>
-            <tr class="challenge-row" data-detail="FSMA 204 requires end-to-end digital traceability for high-risk foods. Enforcement extended to July 2028 due to widespread unreadiness. IoT integration costs are prohibitive for small/mid operators.">
-              <td>FSMA 204 Digital Traceability Mandate</td>
-              <td><span class="severity-badge severity-medium">Medium</span></td>
-            </tr>
-          </tbody>
-        </table>
+    <h3 style="font-size:1.1rem; color:var(--green-dark); margin:2rem 0 1rem; text-align:center;">Top 3 Key Challenges</h3>
+    <div class="challenges-grid fade-up">
+      <div class="challenge-card">
+        <h4>High &amp; Peaky Electricity</h4>
+        <p>Refrigeration systems consume 60&ndash;80% of total facility electricity. Peak demand charges can exceed $15K&ndash;$50K+/month; thermal energy storage is a critical path.</p>
       </div>
+      <div class="challenge-card">
+        <h4>Refrigerant Transition (AIM Act)</h4>
+        <p>EPA mandates 85% HFC reduction by 2036. R-404A (GWP 3,922) must be replaced by ammonia or CO&#8322; systems, requiring significant capital investment.</p>
+      </div>
+      <div class="challenge-card">
+        <h4>Aging Infrastructure</h4>
+        <p>78%+ of facilities built before 2000. Insulation degradation and outdated controls create a 15&times; performance gap between best and worst performers.</p>
+      </div>
+    </div>
 
-      <div class="callout-gold">
-        <p><strong>Lineage + Americold = ~70%</strong> of North American public refrigerated warehouse capacity, up from 61% in 2019.</p>
-      </div>
+    <div class="callout-gold fade-up" style="margin-top: 2rem;">
+      <p><strong>"Lineage + Americold = ~70% of North American public refrigerated warehouse capacity, up from 61% in 2019."</strong></p>
     </div>
   </div>
 </section>
@@ -506,8 +474,8 @@
         <div class="accordion-content" style="max-height:2000px;">
           <div class="accordion-body">
             <div class="pull-quote">"Cold storage and warehousing infrastructure underpins food security for over 330 million Americans &mdash; facilities consume more than 528 trillion BTU annually."</div>
-            <p>The U.S. cold storage and warehousing sector comprises 931 refrigerated warehouse facilities with 3.99 billion cubic feet of gross capacity (3.25 billion usable), serving as the critical infrastructure backbone for temperature-sensitive food distribution. The sector generated approximately $7.5 billion in gross output and employed 73,900 workers.</p>
-            <p>Cold storage is among the most energy-intensive commercial building types, with an electricity EUI of 85.3 kBtu/ft&sup2;/yr &mdash; 4&ndash;5 times that of a standard warehouse. Refrigeration systems consume 60&ndash;80% of total facility electricity. The sector faces a convergence of regulatory, technological, and market pressures: the EPA AIM Act mandates an 85% reduction in HFC consumption by 2036; 78% of facilities were built before 2000; and a 15-fold performance gap between best and worst performers signals massive efficiency opportunity.</p>
+            <p>The U.S. cold storage and warehousing sector comprises 931 refrigerated warehouse facilities<sup class="cite"><a href="#ref-1">1</a></sup> with 3.99 billion cubic feet of gross capacity (3.25 billion usable)<sup class="cite"><a href="#ref-2">2</a></sup>, serving as the critical infrastructure backbone for temperature-sensitive food distribution. The sector generated approximately $7.5 billion in gross output and employed 73,900 workers.</p>
+            <p>Cold storage is among the most energy-intensive commercial building types, with an electricity EUI of 85.3 kBtu/ft&sup2;/yr<sup class="cite"><a href="#ref-5">5</a></sup> &mdash; 4&ndash;5 times that of a standard warehouse.<sup class="cite"><a href="#ref-6">6</a></sup> Refrigeration systems consume 60&ndash;80% of total facility electricity. The sector faces a convergence of regulatory, technological, and market pressures: the EPA AIM Act mandates an 85% reduction in HFC consumption by 2036<sup class="cite"><a href="#ref-3">3</a></sup>; 78% of facilities were built before 2000; and a 15-fold performance gap between best and worst performers signals massive efficiency opportunity.</p>
             <p>The market is projected to grow from $43.2 billion (2024) to $127.7 billion by 2033 at a 12.8% CAGR, driven by e-commerce grocery, pharmaceutical cold chain demand, and increasing consumer expectations for fresh food delivery.</p>
           </div>
         </div>
@@ -517,7 +485,7 @@
         <div class="accordion-header"><span>2. Products &amp; Services (NAICS Coverage)</span><span class="toggle">+</span></div>
         <div class="accordion-content"><div class="accordion-body">
           <p>The cold storage sector spans several NAICS codes: <strong>493120</strong> (Refrigerated Warehousing and Storage), <strong>493110</strong> (General Warehousing and Storage &mdash; when temperature-controlled), and portions of <strong>493130</strong> (Farm Product Warehousing and Storage).</p>
-          <p>Services include: blast freezing, tempering, controlled atmosphere storage, cross-docking, pick-and-pack operations, customs bonded storage, and cold chain logistics management. Facilities range from small on-farm coolers to million-square-foot automated distribution centers operating at temperatures from &minus;25&deg;C (deep freeze) to +4&deg;C (fresh/chill).</p>
+          <p>Services include: blast freezing, tempering, controlled atmosphere storage<sup class="cite"><a href="#ref-14">14</a></sup>, cross-docking, pick-and-pack operations, customs bonded storage, and cold chain logistics management.<sup class="cite"><a href="#ref-11">11</a></sup> Facilities range from small on-farm coolers to million-square-foot automated distribution centers operating at temperatures from &minus;25&deg;C (deep freeze) to +4&deg;C (fresh/chill).</p>
           <p>Key product categories stored include: frozen meats and poultry, dairy products, frozen fruits and vegetables, ice cream, seafood, pharmaceuticals, and fresh produce requiring controlled atmosphere environments.</p>
         </div></div>
       </div>
@@ -528,12 +496,12 @@
           <div class="pull-quote">"Lineage + Americold together represent approximately 70% of North American public refrigerated warehouse capacity, up from 61% in 2019."</div>
           <p>The public refrigerated warehouse market is highly concentrated:</p>
           <ul>
-            <li><strong>Lineage Logistics:</strong> 2.96 billion cubic feet; 480+ facilities globally; completed $4.4&ndash;5.1B IPO (the largest real estate IPO in history). Vertically integrated with transportation and technology platforms.</li>
-            <li><strong>Americold Realty Trust (NYSE: COLD):</strong> 1.49 billion cubic feet; publicly traded REIT. Leading investor in automated high-rise freezer facilities.</li>
+            <li><strong>Lineage Logistics:</strong> 2.96 billion cubic feet; 480+ facilities globally; completed $4.4&ndash;5.1B IPO (the largest real estate IPO in history).<sup class="cite"><a href="#ref-8">8</a></sup> Vertically integrated with transportation and technology platforms.</li>
+            <li><strong>Americold Realty Trust (NYSE: COLD):</strong> 1.49 billion cubic feet; publicly traded REIT.<sup class="cite"><a href="#ref-9">9</a></sup> Leading investor in automated high-rise freezer facilities.</li>
             <li><strong>United States Cold Storage (USCS):</strong> Top-5 North American operator; 40+ locations; privately held. Strong presence in Southeast and Mid-Atlantic.</li>
             <li><strong>NewCold:</strong> European-origin operator specializing in high-automation greenfield construction. Deploys automated storage and retrieval systems (AS/RS) rated to &minus;25&deg;C.</li>
           </ul>
-          <p>The top two operators' combined market share has grown from 61% to approximately 70% of North American public capacity since 2019, reflecting ongoing consolidation driven by scale advantages in energy management, automation, and customer logistics integration.</p>
+          <p>The top two operators' combined market share has grown from 61% to approximately 70% of North American public capacity since 2019<sup class="cite"><a href="#ref-7">7</a></sup>, reflecting ongoing consolidation driven by scale advantages in energy management, automation, and customer logistics integration.</p>
         </div></div>
       </div>
 
@@ -542,9 +510,9 @@
         <div class="accordion-content"><div class="accordion-body">
           <p>Cold storage operations center on maintaining precise temperature conditions through industrial refrigeration systems. Key processes include:</p>
           <ul>
-            <li><strong>Refrigeration:</strong> Industrial ammonia (R-717) or HFC/HFO-based systems with compressors, condensers, evaporators, and expansion devices. Two-stage compression is standard for deep-freeze applications.</li>
+            <li><strong>Refrigeration:</strong> Industrial ammonia (R-717) or HFC/HFO-based systems with compressors, condensers, evaporators, and expansion devices. Two-stage compression is standard for deep-freeze applications.<sup class="cite"><a href="#ref-11">11</a></sup></li>
             <li><strong>Blast freezing:</strong> Rapid temperature reduction of incoming product using high-velocity cold air circulation. Critical for preserving food quality and meeting customer specifications.</li>
-            <li><strong>Controlled atmosphere storage:</strong> Manipulation of O&#8322;, CO&#8322;, and N&#8322; concentrations to extend produce shelf life. Used primarily for apples, pears, and kiwifruit.</li>
+            <li><strong>Controlled atmosphere storage:</strong> Manipulation of O&#8322;, CO&#8322;, and N&#8322; concentrations to extend produce shelf life. Used primarily for apples, pears, and kiwifruit.<sup class="cite"><a href="#ref-14">14</a></sup></li>
             <li><strong>Inventory management:</strong> Warehouse management systems (WMS) coordinate inbound/outbound logistics, storage assignment, and order fulfillment. Automated facilities use AS/RS with crane and shuttle systems.</li>
             <li><strong>Dock operations:</strong> Loading/unloading with temperature-controlled dock seals and shelters to minimize cold chain breaks during product transfer.</li>
           </ul>
@@ -556,8 +524,8 @@
         <div class="accordion-content"><div class="accordion-body">
           <p><strong>Demand drivers:</strong> E-commerce grocery (accelerated post-COVID), pharmaceutical cold chain requirements, increased consumer demand for fresh and frozen foods, and growing international food trade.</p>
           <p><strong>Supply constraints:</strong> New cold storage construction takes 18&ndash;36 months and costs $250&ndash;400+ per square foot &mdash; significantly more than dry warehouse construction ($100&ndash;150/ft&sup2;). Land use restrictions, utility capacity requirements, and ammonia safety regulations create additional barriers to new construction.</p>
-          <p><strong>Capacity utilization:</strong> Public refrigerated warehouses operate at approximately 75&ndash;85% utilization. Seasonal peaks (holiday food production, harvest periods) can push utilization above 95%, creating bottlenecks and driving demand for overflow capacity.</p>
-          <p>Rural and underserved communities in 21 states face cold chain network deficits that compound food loss and food insecurity. These "cold chain deserts" represent both a market opportunity and a public policy challenge.</p>
+          <p><strong>Capacity utilization:</strong> Public refrigerated warehouses operate at approximately 75&ndash;85% utilization.<sup class="cite"><a href="#ref-2">2</a></sup> Seasonal peaks (holiday food production, harvest periods) can push utilization above 95%<sup class="cite"><a href="#ref-18">18</a></sup>, creating bottlenecks and driving demand for overflow capacity.</p>
+          <p>Rural and underserved communities in 21 states face cold chain network deficits that compound food loss and food insecurity.<sup class="cite"><a href="#ref-13">13</a></sup> These "cold chain deserts" represent both a market opportunity and a public policy challenge.</p>
         </div></div>
       </div>
 
@@ -565,10 +533,10 @@
         <div class="accordion-header"><span>6. Change Drivers</span><span class="toggle">+</span></div>
         <div class="accordion-content"><div class="accordion-body">
           <ul>
-            <li><strong>HFC phasedown (AIM Act):</strong> The single largest regulatory driver. GWP &le; 300 required for new equipment from 2025. R-404A (GWP 3,922) must be replaced across all existing systems by 2036. Natural refrigerants (ammonia, CO&#8322;) are the primary alternatives.</li>
+            <li><strong>HFC phasedown (AIM Act):</strong> The single largest regulatory driver. GWP &le; 300 required for new equipment from 2025.<sup class="cite"><a href="#ref-4">4</a></sup> R-404A (GWP 3,922) must be replaced across all existing systems by 2036.<sup class="cite"><a href="#ref-3">3</a></sup> Natural refrigerants (ammonia, CO&#8322;) are the primary alternatives.<sup class="cite"><a href="#ref-16">16</a></sup></li>
             <li><strong>Energy costs:</strong> Electricity represents 35&ndash;50% of operating expenses for cold storage facilities. Demand charge management is critical &mdash; peak demand from defrost cycles and compressor staging can create bills of $15K&ndash;$50K+/month.</li>
             <li><strong>Automation:</strong> Labor challenges (40%+ turnover in sub-zero environments) are driving investment in AS/RS, autonomous mobile robots (AMRs), and automated pick-and-pack systems. Full automation reduces labor needs by 60&ndash;80% but costs $30&ndash;80M per facility.</li>
-            <li><strong>FSMA 204 traceability:</strong> FDA's Food Traceability Rule requires end-to-end digital chain-of-custody for high-risk foods. Enforcement extended to July 2028 due to industry unreadiness. Requires IoT sensor networks and digital integration across the cold chain.</li>
+            <li><strong>FSMA 204 traceability:</strong> FDA's Food Traceability Rule requires end-to-end digital chain-of-custody for high-risk foods.<sup class="cite"><a href="#ref-10">10</a></sup> Enforcement extended to July 2028 due to industry unreadiness. Requires IoT sensor networks and digital integration across the cold chain.</li>
             <li><strong>E-commerce and last-mile:</strong> Direct-to-consumer cold delivery (e.g., Instacart, Amazon Fresh) is reshaping cold chain topology toward smaller, urban-proximate distribution facilities.</li>
           </ul>
         </div></div>
@@ -577,9 +545,9 @@
       <div class="accordion-item">
         <div class="accordion-header"><span>7. Technologies, Inputs &amp; Byproducts</span><span class="toggle">+</span></div>
         <div class="accordion-content"><div class="accordion-body">
-          <p><strong>Refrigeration technologies:</strong> Industrial ammonia (R-717, COP 2.5&ndash;4.0, zero GWP), transcritical CO&#8322; (R-744), cascade systems (CO&#8322;/ammonia), and low-charge ammonia packaged units for medium-size facilities.</p>
+          <p><strong>Refrigeration technologies:</strong> Industrial ammonia (R-717, COP 2.5&ndash;4.0, zero GWP), transcritical CO&#8322; (R-744), cascade systems (CO&#8322;/ammonia), and low-charge ammonia packaged units for medium-size facilities.<sup class="cite"><a href="#ref-11">11</a></sup></p>
           <div class="pull-quote">"Thermal energy storage at $1,000/kW and under 2&cent;/kWh levelized cost &mdash; already cost-competitive &mdash; represents 65 GW of untapped demand flexibility across the cold chain."</div>
-          <p><strong>Energy management:</strong> Evaporator fan VFDs, floating head/suction pressure controls, LED lighting (reduces both lighting energy and cooling load), thermal energy storage (ice/eutectic systems for demand response), and AI-driven optimization of compressor staging and defrost cycles.</p>
+          <p><strong>Energy management:</strong> Evaporator fan VFDs, floating head/suction pressure controls, LED lighting (reduces both lighting energy and cooling load), thermal energy storage (ice/eutectic systems for demand response)<sup class="cite"><a href="#ref-17">17</a></sup>, and AI-driven optimization of compressor staging and defrost cycles.</p>
           <p><strong>Automation:</strong> Automated storage and retrieval systems (AS/RS), autonomous mobile robots (AMRs), goods-to-person picking systems, and robotic palletizing. NewCold and Americold are leaders in high-bay automated freezer construction.</p>
           <p><strong>Waste heat recovery:</strong> Heat rejected by refrigeration condensers can be captured for office heating, dock snow melt, and sanitation hot water. Typical payback: 2&ndash;4 years in cold climates.</p>
         </div></div>
@@ -591,8 +559,8 @@
           <p><strong>Operators:</strong> Lineage Logistics, Americold, USCS, NewCold, Preferred Freezer Services, Nordic Logistics, VersaCold (Canada).</p>
           <p><strong>Equipment/OEM:</strong> Emerson (Copeland compressors), Johnson Controls (York/Frick), GEA Group, Mayekawa (Mycom), Bitzer, Evapco (condensers/evaporators), NIBE/Alfa Laval.</p>
           <p><strong>Automation vendors:</strong> Dematic (KION Group), Swisslog, SSI SCHAEFER, AutoStore, Locus Robotics, 6 River Systems (Ocado).</p>
-          <p><strong>Trade associations:</strong> Global Cold Chain Alliance (GCCA), International Association of Refrigerated Warehouses (IARW), Refrigerating Engineers & Technicians Association (RETA), ASHRAE.</p>
-          <p><strong>Federal/regulatory:</strong> EPA (AIM Act, SNAP), FDA (FSMA 204), DOE (EERE, BTO), USDA (NASS Cold Storage Report, AMS).</p>
+          <p><strong>Trade associations:</strong> Global Cold Chain Alliance (GCCA)<sup class="cite"><a href="#ref-7">7</a></sup>, International Association of Refrigerated Warehouses (IARW)<sup class="cite"><a href="#ref-12">12</a></sup>, Refrigerating Engineers & Technicians Association (RETA), ASHRAE.<sup class="cite"><a href="#ref-11">11</a></sup></p>
+          <p><strong>Federal/regulatory:</strong> EPA (AIM Act, SNAP)<sup class="cite"><a href="#ref-3">3</a></sup>, FDA (FSMA 204)<sup class="cite"><a href="#ref-10">10</a></sup>, DOE (EERE, BTO)<sup class="cite"><a href="#ref-15">15</a></sup>, USDA (NASS Cold Storage Report, AMS).<sup class="cite"><a href="#ref-1">1</a></sup></p>
         </div></div>
       </div>
 
@@ -600,9 +568,9 @@
         <div class="accordion-header"><span>9. Energy &amp; Technology Challenges</span><span class="toggle">+</span></div>
         <div class="accordion-content"><div class="accordion-body">
           <ul>
-            <li><strong>Refrigeration system efficiency:</strong> The 15&times; performance gap (26 to 379 kWh/m&sup3;/yr) signals enormous efficiency potential. Best-practice facilities use floating pressure controls, VFDs on all motors, LED lighting, and optimized defrost schedules.</li>
-            <li><strong>Demand charge management:</strong> Peak electricity demand from compressor cycling, defrost operations, and blast freezing drives disproportionate utility costs. Thermal energy storage and load-shifting strategies can reduce demand charges 20&ndash;40%.</li>
-            <li><strong>Refrigerant transition:</strong> Moving from R-404A (GWP 3,922) to low-GWP alternatives requires system redesign. Ammonia systems have safety requirements (process safety management); CO&#8322; systems face performance challenges in warm climates (COP drops above 30&deg;C ambient).</li>
+            <li><strong>Refrigeration system efficiency:</strong> The 15&times; performance gap (26 to 379 kWh/m&sup3;/yr) signals enormous efficiency potential.<sup class="cite"><a href="#ref-5">5</a></sup> Best-practice facilities use floating pressure controls, VFDs on all motors, LED lighting, and optimized defrost schedules.</li>
+            <li><strong>Demand charge management:</strong> Peak electricity demand from compressor cycling, defrost operations, and blast freezing drives disproportionate utility costs. Thermal energy storage and load-shifting strategies can reduce demand charges 20&ndash;40%.<sup class="cite"><a href="#ref-17">17</a></sup></li>
+            <li><strong>Refrigerant transition:</strong> Moving from R-404A (GWP 3,922) to low-GWP alternatives requires system redesign.<sup class="cite"><a href="#ref-4">4</a></sup> Ammonia systems have safety requirements (process safety management); CO&#8322; systems face performance challenges in warm climates (COP drops above 30&deg;C ambient).</li>
             <li><strong>Building envelope:</strong> Insulation degradation in aging facilities increases energy consumption by 15&ndash;30% over 20+ years. Vapor barrier failures cause ice formation in walls and roof structures, compounding heat gain.</li>
             <li><strong>Submetering gap:</strong> The #1 cited barrier to efficiency is lack of energy submetering. Most facilities meter total building consumption but cannot attribute energy use to individual systems, zones, or processes.</li>
           </ul>
@@ -612,10 +580,10 @@
       <div class="accordion-item">
         <div class="accordion-header"><span>10. Competitivity &amp; Market Structure</span><span class="toggle">+</span></div>
         <div class="accordion-content"><div class="accordion-body">
-          <p>The cold storage market is consolidating rapidly. The top two operators (Lineage + Americold) control approximately 70% of public capacity. This concentration creates both scale advantages (energy procurement, technology investment, customer logistics integration) and market access challenges for smaller operators.</p>
+          <p>The cold storage market is consolidating rapidly. The top two operators (Lineage + Americold) control approximately 70% of public capacity.<sup class="cite"><a href="#ref-8">8</a></sup><sup class="cite"><a href="#ref-9">9</a></sup> This concentration creates both scale advantages (energy procurement, technology investment, customer logistics integration) and market access challenges for smaller operators.</p>
           <div class="pull-quote">"Rural and underserved communities in 21 states face cold chain network deficits that compound food loss and food insecurity."</div>
           <p><strong>New construction economics:</strong> Greenfield cold storage costs $250&ndash;400+/ft&sup2;, compared to $100&ndash;150/ft&sup2; for dry warehouses. The premium reflects insulation, vapor barriers, industrial refrigeration, and reinforced flooring for automated systems. Construction timelines of 18&ndash;36 months create market entry barriers.</p>
-          <p><strong>Operating margins:</strong> Public cold storage companies typically operate at 15&ndash;25% EBITDA margins, with energy costs representing the single largest controllable expense. Facilities that invest in efficiency (VFDs, LED, controls optimization) achieve 20&ndash;40% energy cost reductions.</p>
+          <p><strong>Operating margins:</strong> Public cold storage companies typically operate at 15&ndash;25% EBITDA margins<sup class="cite"><a href="#ref-9">9</a></sup>, with energy costs representing the single largest controllable expense. Facilities that invest in efficiency (VFDs, LED, controls optimization) achieve 20&ndash;40% energy cost reductions.<sup class="cite"><a href="#ref-5">5</a></sup></p>
         </div></div>
       </div>
 
@@ -625,12 +593,39 @@
           <p>The cold storage sector is entering a period of rapid transformation driven by regulatory mandates, market growth, and technology adoption:</p>
           <ul>
             <li><strong>Market growth:</strong> $43.2B (2024) &rarr; $127.7B (2033) at 12.8% CAGR. Pharmaceutical and e-commerce cold chain are the fastest-growing segments.</li>
-            <li><strong>Refrigerant transition:</strong> The AIM Act phasedown will force system-wide refrigerant changes by 2036. Early adopters of ammonia and CO&#8322; systems will gain cost and compliance advantages.</li>
+            <li><strong>Refrigerant transition:</strong> The AIM Act phasedown will force system-wide refrigerant changes by 2036.<sup class="cite"><a href="#ref-3">3</a></sup> Early adopters of ammonia and CO&#8322; systems will gain cost and compliance advantages.<sup class="cite"><a href="#ref-16">16</a></sup></li>
             <li><strong>Automation wave:</strong> AS/RS and AMR deployment will accelerate as labor costs rise and technology costs decline. Robotics-as-a-Service (RaaS) models will make automation accessible to mid-size operators.</li>
             <li><strong>Thermal energy storage:</strong> At $1,000/kW and &lt;2&cent;/kWh levelized cost, thermal storage is already cost-competitive for demand charge management. Widespread deployment could unlock 65 GW of demand flexibility across the cold chain.</li>
-            <li><strong>Digital traceability:</strong> FSMA 204 compliance will drive IoT sensor deployment throughout the cold chain, creating new data streams for energy optimization and food safety.</li>
-            <li><strong>Rural cold chain development:</strong> Federal and state programs may target the 21 states with cold chain deficits, creating market opportunities for modular, energy-efficient cold storage solutions.</li>
+            <li><strong>Digital traceability:</strong> FSMA 204 compliance will drive IoT sensor deployment throughout the cold chain, creating new data streams for energy optimization and food safety.<sup class="cite"><a href="#ref-10">10</a></sup></li>
+            <li><strong>Rural cold chain development:</strong> Federal and state programs may target the 21 states with cold chain deficits, creating market opportunities for modular, energy-efficient cold storage solutions.<sup class="cite"><a href="#ref-13">13</a></sup></li>
           </ul>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>12. References</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>Authoritative sources cited throughout this sector profile. Click any reference number in the text above to jump to the corresponding entry.</p>
+          <ol class="references-list" style="padding-left: 1.5rem;">
+            <li id="ref-1">USDA National Agricultural Statistics Service (NASS). <em>Cold Storage Report.</em> <a href="https://usda.library.cornell.edu/concern/publications/pg15bd88s" target="_blank" rel="noopener">https://usda.library.cornell.edu/concern/publications/pg15bd88s</a></li>
+            <li id="ref-2">USDA National Agricultural Statistics Service (NASS). <em>Capacity of Refrigerated Warehouses.</em> <span class="broken-link">URL needs verification</span></li>
+            <li id="ref-3">U.S. Environmental Protection Agency. <em>Final Rule: Phasedown of Hydrofluorocarbons &mdash; Establishing the Allowance Allocation and Trading Program under the AIM Act.</em> <span class="broken-link">URL needs verification</span></li>
+            <li id="ref-4">U.S. Environmental Protection Agency. <em>Final Rule: Technology Transitions Program under the AIM Act (SNAP).</em> <span class="broken-link">URL needs verification</span></li>
+            <li id="ref-5">National Renewable Energy Laboratory (NREL). <em>Cold Storage Energy Use Analysis</em> (Technical Report OSTI-83583). <span class="broken-link">URL needs verification</span></li>
+            <li id="ref-6">U.S. Energy Information Administration. <em>Commercial Buildings Energy Consumption Survey (CBECS 2018).</em> <a href="https://www.eia.gov/consumption/commercial/" target="_blank" rel="noopener">https://www.eia.gov/consumption/commercial/</a></li>
+            <li id="ref-7">Global Cold Chain Alliance (GCCA). <em>Industry Data &amp; Resources.</em> <a href="https://www.gcca.org/" target="_blank" rel="noopener">https://www.gcca.org/</a></li>
+            <li id="ref-8">Lineage Inc. <em>Investor Relations &amp; IPO Prospectus.</em> <span class="broken-link">URL needs verification</span></li>
+            <li id="ref-9">Americold Realty Trust (NYSE: COLD). <em>Investor Relations.</em> <a href="https://www.americold.com/investors/" target="_blank" rel="noopener">https://www.americold.com/investors/</a></li>
+            <li id="ref-10">U.S. Food and Drug Administration. <em>FSMA Final Rule for Requirements for Additional Traceability Records for Certain Foods (FSMA Section 204).</em> <a href="https://www.fda.gov/food/food-safety-modernization-act-fsma/fsma-final-rule-requirements-additional-traceability-records-certain-foods" target="_blank" rel="noopener">https://www.fda.gov/food/food-safety-modernization-act-fsma/fsma-final-rule-requirements-additional-traceability-records-certain-foods</a></li>
+            <li id="ref-11">ASHRAE. <em>ASHRAE Handbook &mdash; Refrigeration.</em> <a href="https://www.ashrae.org/technical-resources/ashrae-handbook" target="_blank" rel="noopener">https://www.ashrae.org/technical-resources/ashrae-handbook</a></li>
+            <li id="ref-12">International Association of Refrigerated Warehouses (IARW), an affiliate of GCCA. <a href="https://www.gcca.org/affiliates/iarw" target="_blank" rel="noopener">https://www.gcca.org/affiliates/iarw</a></li>
+            <li id="ref-13">ReFED. <em>Food Waste Data &amp; Cold Chain Insights.</em> <a href="https://refed.org/food-waste/the-problem/" target="_blank" rel="noopener">https://refed.org/food-waste/the-problem/</a></li>
+            <li id="ref-14">USDA Agricultural Research Service (ARS). <em>Tree Fruit Research Laboratory &mdash; Controlled Atmosphere Storage Research, Wenatchee, WA.</em> <span class="broken-link">URL needs verification</span></li>
+            <li id="ref-15">U.S. Department of Energy, Building Technologies Office. <em>DOE Industrial Decarbonization Roadmap.</em> <span class="broken-link">URL needs verification</span></li>
+            <li id="ref-16">U.S. Environmental Protection Agency. <em>GreenChill Advanced Refrigeration Partnership.</em> <a href="https://www.epa.gov/greenchill" target="_blank" rel="noopener">https://www.epa.gov/greenchill</a></li>
+            <li id="ref-17">Lawrence Berkeley National Laboratory, Building Technologies. <em>Demand Response Research.</em> <a href="https://buildings.lbl.gov/demand-response" target="_blank" rel="noopener">https://buildings.lbl.gov/demand-response</a></li>
+            <li id="ref-18">USDA National Agricultural Statistics Service (NASS). <em>Grain Stocks Report.</em> <a href="https://usda.library.cornell.edu/concern/publications/xg94hp534" target="_blank" rel="noopener">https://usda.library.cornell.edu/concern/publications/xg94hp534</a></li>
+          </ol>
         </div></div>
       </div>
     </div>
@@ -745,15 +740,46 @@
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 20); });
 
-// ── SMOOTH SCROLL ──
+// ── SMOOTH SCROLL (with accordion expand) ──
+function scrollToTargetWithAccordion(target) {
+  const accordionContent = target.closest('.accordion-content');
+  if (accordionContent) {
+    const header = accordionContent.previousElementSibling;
+    if (header && !header.classList.contains('active')) {
+      document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
+      document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
+      header.classList.add('active');
+      accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
+      setTimeout(() => {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (target.id && target.id.indexOf('ref-') === 0) {
+          const origBg = target.style.background;
+          target.style.background = 'var(--gold-light)';
+          target.style.transition = 'background 0.5s ease';
+          setTimeout(() => { target.style.background = origBg; }, 2500);
+        }
+      }, 450);
+      return;
+    }
+  }
+  target.scrollIntoView({ behavior: 'smooth', block: target.id && target.id.indexOf('ref-') === 0 ? 'center' : 'start' });
+  if (target.id && target.id.indexOf('ref-') === 0) {
+    const origBg = target.style.background;
+    target.style.background = 'var(--gold-light)';
+    target.style.transition = 'background 0.5s ease';
+    setTimeout(() => { target.style.background = origBg; }, 2500);
+  }
+}
+
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
+    const href = a.getAttribute('href');
+    if (href === '#' || href.length < 2) return;
+    const target = document.querySelector(href);
+    if (!target) return;
     e.preventDefault();
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      document.querySelector('.nav-links')?.classList.remove('open');
-    }
+    scrollToTargetWithAccordion(target);
+    document.querySelector('.nav-links')?.classList.remove('open');
   });
 });
 
@@ -762,33 +788,6 @@ const fadeObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
-
-// ── KPI COUNTERS ──
-function countUp(el, target, prefix, suffix, duration, useComma) {
-  const start = performance.now();
-  const isDecimal = target % 1 !== 0;
-  function update(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    let current = target * eased;
-    let display = isDecimal ? current.toFixed(1) : Math.round(current).toString();
-    if (useComma) display = Number(display).toLocaleString('en-US');
-    el.textContent = (prefix || '') + display + (suffix || '');
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
-}
-const kpiObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && !entry.target.dataset.animated) {
-      entry.target.dataset.animated = 'true';
-      const el = entry.target;
-      countUp(el, parseFloat(el.dataset.target), el.dataset.prefix||'', el.dataset.suffix||'', 1800, el.dataset.comma==='true');
-    }
-  });
-}, { threshold: 0.3 });
-document.querySelectorAll('.kpi-value').forEach(el => kpiObserver.observe(el));
 
 // ── CHALLENGE ROW EXPAND ──
 document.querySelectorAll('.challenge-row').forEach(row => {

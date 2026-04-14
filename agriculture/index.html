@@ -129,8 +129,8 @@
 
     /* HERO */
     .hero {
-      position: relative; min-height: 100vh; display: flex;
-      align-items: center; justify-content: center; overflow: hidden; padding-top: 70px;
+      position: relative; min-height: 55vh; display: flex;
+      align-items: center; justify-content: center; overflow: hidden; padding: 120px 2rem 80px;
     }
     .hero-bg {
       position: absolute; inset: 0; z-index: 0;
@@ -208,6 +208,12 @@
     }
 
     /* CHALLENGE CARDS */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--light-bg); border-radius: 12px; padding: 1.25rem; text-align: center; border: 1px solid #e8efe8; transition: transform 0.2s, box-shadow 0.2s; }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+    .stat-card .val { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--green-dark); font-weight: 700; }
+    .stat-card .lbl { font-size: 0.82rem; color: var(--slate); margin-top: 0.25rem; }
+    @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
     .challenges-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
     .challenge-card {
       background: white; border: 1px solid #e8efe8; border-radius: 14px;
@@ -299,6 +305,16 @@
       padding: 1rem 1.25rem; border-radius: 8px; margin: 1rem 0;
       font-style: italic; font-size: 0.92rem; color: var(--green-dark); line-height: 1.7;
     }
+    .cite { font-size: 0.7em; vertical-align: super; margin-left: 1px; }
+    .cite a { color: var(--green-mid); text-decoration: none; font-weight: 600; }
+    .cite a:hover { text-decoration: underline; }
+    .references-list li { margin-bottom: 0.6rem; font-size: 0.85rem; }
+    .broken-link {
+      display: inline-block; padding: 0.1rem 0.5rem; background: #fed7d7; color: #c53030;
+      border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.25rem;
+    }
+    .references-list a { color: var(--green-mid); text-decoration: none; word-break: break-word; }
+    .references-list a:hover { text-decoration: underline; color: var(--green-dark); }
 
     /* TRL SOLUTIONS */
     .trl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
@@ -389,38 +405,6 @@
     <div class="hero-eyebrow">FOOD Center &mdash; Subsector Profile</div>
     <h1>U.S. Agriculture</h1>
     <p class="hero-subtitle">Conventional Agriculture &amp; Controlled Environment Agriculture | NAICS 111, 112, 1114</p>
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="513.5" data-prefix="$" data-suffix="B">$0</div>
-        <div class="kpi-label">Total Cash Receipts (2024)</div>
-        <div class="kpi-source">USDA ERS 2025</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="1.88" data-suffix="M">0</div>
-        <div class="kpi-label">Farms</div>
-        <div class="kpi-source">USDA NASS 2024</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="880" data-suffix="M acres">0</div>
-        <div class="kpi-label">Land in Farms</div>
-        <div class="kpi-source">2022 Census of Ag</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="222.3" data-prefix="$" data-suffix="B">$0</div>
-        <div class="kpi-label">Farm Contribution to GDP</div>
-        <div class="kpi-source">~0.8% of U.S. GDP</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="663.6" data-suffix=" MMT CO&#8322;e">0</div>
-        <div class="kpi-label">GHG Emissions (2022)</div>
-        <div class="kpi-source">~10% of U.S. total</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-value" data-target="1872" data-comma="true" data-suffix=" TBtu">0</div>
-        <div class="kpi-label">Direct On-Farm Energy Use</div>
-        <div class="kpi-source">~1.9% of U.S. primary energy</div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -444,6 +428,19 @@
       <div class="green-underline"></div>
     </div>
 
+    <div class="stats-grid fade-up">
+      <div class="stat-card"><div class="val">$513.5B</div><div class="lbl">Total Cash Receipts (2024)</div></div>
+      <div class="stat-card"><div class="val">1.9M</div><div class="lbl">Farms</div></div>
+      <div class="stat-card"><div class="val">880M</div><div class="lbl">Acres in Farms</div></div>
+      <div class="stat-card"><div class="val">$244.9B</div><div class="lbl">Crop Cash Receipts</div></div>
+      <div class="stat-card"><div class="val">$268.6B</div><div class="lbl">Livestock Cash Receipts</div></div>
+      <div class="stat-card"><div class="val">22.1M</div><div class="lbl">Ag &amp; Food System Jobs</div></div>
+      <div class="stat-card"><div class="val">$222.3B</div><div class="lbl">Farm Contribution to GDP</div></div>
+      <div class="stat-card"><div class="val">663.6 MMT</div><div class="lbl">CO&#8322;e GHG Emissions</div></div>
+      <div class="stat-card"><div class="val">1,872 TBtu</div><div class="lbl">On-Farm Energy Use</div></div>
+    </div>
+
+    <h3 style="font-size:1.1rem; color:var(--green-dark); margin:2rem 0 1rem; text-align:center;">Top 3 Key Challenges</h3>
     <div class="challenges-grid fade-up">
       <div class="challenge-card">
         <h4>Water-Energy Nexus</h4>
@@ -542,10 +539,10 @@
         </div>
         <div class="accordion-content" style="max-height:2000px;">
           <div class="accordion-body">
-            <p>U.S. agriculture generates over $513 billion in annual commodity receipts across 1.88 million farms and 880 million acres, anchoring a food and agricultural system that supports 22.1 million jobs and contributes roughly $1.5 trillion to GDP. The sector faces a defining tension: it must continue to increase output and affordability while addressing severe structural vulnerabilities in water, energy, emissions, and labor.</p>
+            <p>U.S. agriculture generates over $513 billion in annual commodity receipts<sup class="cite"><a href="#ref-1">1</a></sup> across 1.88 million farms and 880 million acres<sup class="cite"><a href="#ref-2">2</a></sup>, anchoring a food and agricultural system that supports 22.1 million jobs and contributes roughly $1.5 trillion to GDP. The sector faces a defining tension: it must continue to increase output and affordability while addressing severe structural vulnerabilities in water, energy, emissions, and labor.</p>
             <div class="pull-quote">"U.S. agriculture generates over $513 billion in annual commodity receipts across 1.88 million farms and 880 million acres &mdash; yet the sector's energy intensity, non-CO&#8322; emissions profile, and structural water vulnerabilities make it one of the most complex and consequential targets for DOE R&amp;D investment."</div>
-            <p>Agriculture directly consumes approximately 1,872 TBtu of primary energy annually (~1.9% of U.S. total) and generates 663.6 MMT CO&#8322;e in greenhouse gas emissions (~10% of U.S. total). Critically, the sector's emissions are dominated by non-CO&#8322; gases &mdash; soil nitrous oxide (49%) and enteric methane (32.5%) &mdash; that lack the scalable engineering mitigation pathways available for CO&#8322;.</p>
-            <p>Farm consolidation continues to accelerate: the top 4.7% of farms now account for 75% of all sales, and the top 3,785 farms account for 25%. This concentration shapes technology adoption, policy reach, and the economic resilience of rural communities. DOE R&amp;D investments that target the structural energy, emissions, and water challenges of the sector can deliver outsized returns in competitiveness, affordability, and climate mitigation.</p>
+            <p>Agriculture directly consumes approximately 1,872 TBtu of primary energy annually (~1.9% of U.S. total) and generates 663.6 MMT CO&#8322;e in greenhouse gas emissions (~10% of U.S. total)<sup class="cite"><a href="#ref-4">4</a></sup>. Critically, the sector's emissions are dominated by non-CO&#8322; gases &mdash; soil nitrous oxide (49%) and enteric methane (32.5%) &mdash; that lack the scalable engineering mitigation pathways available for CO&#8322;<sup class="cite"><a href="#ref-16">16</a></sup>.</p>
+            <p>Farm consolidation continues to accelerate: the top 4.7% of farms now account for 75% of all sales, and the top 3,785 farms account for 25%<sup class="cite"><a href="#ref-12">12</a></sup>. This concentration shapes technology adoption, policy reach, and the economic resilience of rural communities. DOE R&amp;D investments that target the structural energy, emissions, and water challenges of the sector can deliver outsized returns in competitiveness, affordability, and climate mitigation.</p>
           </div>
         </div>
       </div>
@@ -554,9 +551,9 @@
         <div class="accordion-header"><span>2. Products &amp; Services (NAICS Coverage)</span><span class="toggle">+</span></div>
         <div class="accordion-content"><div class="accordion-body">
           <p>The agriculture subsector encompasses NAICS 111 (Crop Production) and NAICS 112 (Animal Production and Aquaculture), along with NAICS 1114 (Greenhouse, Nursery, and Floriculture Production) for controlled environment agriculture.</p>
-          <p><strong>Crop production (NAICS 111)</strong> covers field crops (corn, soybeans, wheat, cotton, rice), specialty crops (fruits, vegetables, tree nuts), and oilseeds. In 2024, crop cash receipts totaled $244.9 billion across 311.2 million harvested acres. Corn alone accounted for $82.0 billion on 91.5 million planted acres, with a record yield of 179.3 bushels per acre. Soybeans contributed $30.7 billion on 87.1 million planted acres. Specialty crops &mdash; defined by USDA as fruits, vegetables, tree nuts, dried fruits, horticulture, and nursery crops &mdash; generated approximately $58.3 billion, with California producing roughly 50% of U.S. specialty crop value.</p>
-          <p><strong>Animal production (NAICS 112)</strong> includes cattle and calves, dairy, poultry and eggs, hogs, and aquaculture. Livestock cash receipts reached $268.6 billion in 2024, with cattle and calves alone contributing $112.1 billion at record per-head prices of $186.86/cwt. Poultry and eggs generated $70.2 billion (9.33 billion broilers and 109 billion eggs), dairy contributed $50.7 billion (226 billion pounds of milk from 9.57 million cows), and hogs produced approximately $27.2 billion from a 75.5 million head inventory. Aquaculture remains relatively small at $1.9 billion across 3,453 farms, though the U.S. imports over 79% of the seafood it consumes.</p>
-          <p><strong>CEA (subset of NAICS 1114)</strong> encompasses greenhouse vegetable production and indoor vertical farming. Greenhouse vegetable sales totaled $1.34 billion across 133 million square feet of protected growing space in 11,465 CEA operations (2022 Census). CEA offers 10&ndash;20x yield improvements over open-field production and 90&ndash;95% water savings, but faces severe energy cost constraints that currently limit commercial viability, particularly for indoor vertical farms.</p>
+          <p><strong>Crop production (NAICS 111)</strong> covers field crops (corn, soybeans, wheat, cotton, rice), specialty crops (fruits, vegetables, tree nuts), and oilseeds. In 2024, crop cash receipts totaled $244.9 billion across 311.2 million harvested acres<sup class="cite"><a href="#ref-13">13</a></sup>. Corn alone accounted for $82.0 billion on 91.5 million planted acres, with a record yield of 179.3 bushels per acre<sup class="cite"><a href="#ref-14">14</a></sup>. Soybeans contributed $30.7 billion on 87.1 million planted acres. Specialty crops &mdash; defined by USDA as fruits, vegetables, tree nuts, dried fruits, horticulture, and nursery crops &mdash; generated approximately $58.3 billion, with California producing roughly 50% of U.S. specialty crop value.</p>
+          <p><strong>Animal production (NAICS 112)</strong> includes cattle and calves, dairy, poultry and eggs, hogs, and aquaculture. Livestock cash receipts reached $268.6 billion in 2024<sup class="cite"><a href="#ref-1">1</a></sup>, with cattle and calves alone contributing $112.1 billion at record per-head prices of $186.86/cwt<sup class="cite"><a href="#ref-17">17</a></sup>. Poultry and eggs generated $70.2 billion (9.33 billion broilers and 109 billion eggs), dairy contributed $50.7 billion (226 billion pounds of milk from 9.57 million cows), and hogs produced approximately $27.2 billion from a 75.5 million head inventory. Aquaculture remains relatively small at $1.9 billion across 3,453 farms<sup class="cite"><a href="#ref-20">20</a></sup>, though the U.S. imports over 79% of the seafood it consumes.</p>
+          <p><strong>CEA (subset of NAICS 1114)</strong> encompasses greenhouse vegetable production and indoor vertical farming. Greenhouse vegetable sales totaled $1.34 billion across 133 million square feet of protected growing space in 11,465 CEA operations (2022 Census)<sup class="cite"><a href="#ref-2">2</a></sup>. CEA offers 10&ndash;20x yield improvements over open-field production and 90&ndash;95% water savings, but faces severe energy cost constraints that currently limit commercial viability, particularly for indoor vertical farms.</p>
           <p><strong>Adjacent sectors:</strong> Agriculture's upstream connections include fertilizer manufacturing (NAICS 3253), agricultural chemical manufacturing (NAICS 3253), farm machinery (NAICS 3331), and irrigation systems (NAICS 3332). Downstream connections include animal slaughter/processing (NAICS 3116), grain and oilseed milling (NAICS 3112), and dairy product manufacturing (NAICS 3115).</p>
         </div></div>
       </div>
@@ -565,9 +562,9 @@
         <div class="accordion-header"><span>3. Leading Producers &amp; Market Concentration</span><span class="toggle">+</span></div>
         <div class="accordion-content"><div class="accordion-body">
           <div class="pull-quote">"The top 4.7% of farms (89,210 operations) account for 75% of all sales &mdash; the top 3,785 farms account for 25%."</div>
-          <p>U.S. agriculture is characterized by extreme market concentration. While the USDA counts 1.88 million farms, the vast majority are small operations: 73% of farms have gross cash farm income under $100,000 and account for just 4% of total agricultural output. The average farm size is 471 acres (up 5% from 2017), but this figure masks enormous variation from hobby farms under 50 acres to operations exceeding 50,000 acres.</p>
-          <p><strong>Top producing states by market value (2022 Ag Census):</strong> California ($59.0B), Iowa ($43.9B), Texas ($32.2B), Nebraska ($29.4B), Minnesota ($28.5B), Illinois ($26.4B), Kansas ($24.0B), North Carolina ($18.7B), Indiana ($18.0B), and Wisconsin ($16.7B). California alone produces approximately 13% of U.S. agricultural output by value, dominating in specialty crops, dairy, and almonds. Iowa leads in corn, soybeans, and hogs, producing one-third of all U.S. hog inventory.</p>
-          <p><strong>Farm typology (ERS classification):</strong> Small family farms (GCFI &lt;$350K) account for 89.6% of all farms but only 21% of production value. Midsize family farms ($350K&ndash;$999K) are 5.7% of farms and 16% of value. Large family farms ($1M+) are 3.4% of farms and 47% of value. Non-family farms are 1.3% of farms and 16% of value. The ongoing consolidation trend means fewer, larger operations are producing an increasing share of output.</p>
+          <p>U.S. agriculture is characterized by extreme market concentration. While the USDA counts 1.88 million farms, the vast majority are small operations: 73% of farms have gross cash farm income under $100,000 and account for just 4% of total agricultural output<sup class="cite"><a href="#ref-9">9</a></sup>. The average farm size is 471 acres (up 5% from 2017)<sup class="cite"><a href="#ref-3">3</a></sup>, but this figure masks enormous variation from hobby farms under 50 acres to operations exceeding 50,000 acres.</p>
+          <p><strong>Top producing states by market value (2022 Ag Census):</strong> California ($59.0B), Iowa ($43.9B), Texas ($32.2B), Nebraska ($29.4B), Minnesota ($28.5B), Illinois ($26.4B), Kansas ($24.0B), North Carolina ($18.7B), Indiana ($18.0B), and Wisconsin ($16.7B)<sup class="cite"><a href="#ref-2">2</a></sup>. California alone produces approximately 13% of U.S. agricultural output by value, dominating in specialty crops, dairy, and almonds. Iowa leads in corn, soybeans, and hogs, producing one-third of all U.S. hog inventory.</p>
+          <p><strong>Farm typology (ERS classification):</strong> Small family farms (GCFI &lt;$350K) account for 89.6% of all farms but only 21% of production value. Midsize family farms ($350K&ndash;$999K) are 5.7% of farms and 16% of value. Large family farms ($1M+) are 3.4% of farms and 47% of value. Non-family farms are 1.3% of farms and 16% of value<sup class="cite"><a href="#ref-12">12</a></sup>. The ongoing consolidation trend means fewer, larger operations are producing an increasing share of output.</p>
           <p><strong>Input supply concentration:</strong> Four companies (Bayer/Monsanto, Corteva, BASF, Syngenta/ChemChina) control roughly 60% of the global seed and crop protection market. In farm equipment, three firms (Deere, CNH Industrial, AGCO) dominate the large machinery market. In fertilizer, five companies (Nutrien, Mosaic, CF Industries, Koch Fertilizer, OCI) control the majority of North American nitrogen and phosphate production.</p>
           <p><strong>Processing/buyer concentration:</strong> In meatpacking, four firms (Tyson, JBS, Cargill, National Beef/Marfrig) process approximately 85% of U.S. fed cattle and 70% of hogs. In grain trading, four companies (Cargill, ADM, Bunge, Louis Dreyfus &mdash; "ABCD" firms) handle an estimated 70&ndash;90% of global grain trade. This dual concentration (large farms upstream, large processors downstream) creates competitive pressure on midsize operations.</p>
         </div></div>
@@ -586,8 +583,8 @@
       <div class="accordion-item">
         <div class="accordion-header"><span>5. Supply &amp; Demand</span><span class="toggle">+</span></div>
         <div class="accordion-content"><div class="accordion-body">
-          <p>U.S. agriculture produces food, feed, fiber, and fuel for both domestic consumption and export. The U.S. is the world's largest agricultural exporter, with $170+ billion in annual agricultural exports. Key export commodities include soybeans, corn, tree nuts, beef, pork, and dairy products.</p>
-          <p><strong>Upstream inputs</strong> include seeds, fertilizers, crop protection chemicals, fuel, machinery, irrigation water, animal feed, and veterinary products. Total production expenses reached approximately $467 billion in 2024.</p>
+          <p>U.S. agriculture produces food, feed, fiber, and fuel for both domestic consumption and export. The U.S. is the world's largest agricultural exporter, with $170+ billion in annual agricultural exports<sup class="cite"><a href="#ref-11">11</a></sup>. Key export commodities include soybeans, corn, tree nuts, beef, pork, and dairy products.</p>
+          <p><strong>Upstream inputs</strong> include seeds, fertilizers, crop protection chemicals, fuel, machinery, irrigation water, animal feed, and veterinary products. Total production expenses reached approximately $467 billion in 2024<sup class="cite"><a href="#ref-1">1</a></sup>.</p>
           <p><strong>Downstream connections</strong> link to food processing (NAICS 311), beverage manufacturing (NAICS 312), animal slaughter/processing, grain elevators, and commodity trading. The food dollar series shows that the farm share of the consumer food dollar is approximately 14.3 cents &mdash; the remaining 85.7 cents goes to processing, transportation, retail, and foodservice.</p>
         </div></div>
       </div>
@@ -598,8 +595,8 @@
           <p>Several forces are reshaping U.S. agriculture:</p>
           <ul>
             <li><strong>Climate variability:</strong> Increasing drought frequency, extreme heat events, and shifting precipitation patterns directly affect crop yields and livestock productivity.</li>
-            <li><strong>Water scarcity:</strong> The Ogallala Aquifer has lost 286 million acre-feet (~9%) since predevelopment, threatening irrigated agriculture across the High Plains.</li>
-            <li><strong>Labor shortages:</strong> The agricultural workforce has declined 17% since 2006. H-2A visa applications have tripled since 2012, signaling deepening labor constraints.</li>
+            <li><strong>Water scarcity:</strong> The Ogallala Aquifer has lost 286 million acre-feet (~9%) since predevelopment, threatening irrigated agriculture across the High Plains<sup class="cite"><a href="#ref-10">10</a></sup>.</li>
+            <li><strong>Labor shortages:</strong> The agricultural workforce has declined 17% since 2006. H-2A visa applications have tripled since 2012, signaling deepening labor constraints<sup class="cite"><a href="#ref-15">15</a></sup>.</li>
             <li><strong>Input cost inflation:</strong> Fertilizer, fuel, and seed costs have risen sharply since 2020, compressing farm margins despite record commodity prices in 2022.</li>
             <li><strong>Technology adoption:</strong> Precision agriculture, autonomous equipment, and digital platforms are transforming large-scale operations but remain inaccessible to most small and mid-size farms.</li>
             <li><strong>Regulatory pressure:</strong> EPA WOTUS definitions, USDA conservation compliance, and emerging GHG reporting requirements add compliance costs and complexity.</li>
@@ -610,10 +607,10 @@
       <div class="accordion-item">
         <div class="accordion-header"><span>7. Technologies, Inputs &amp; Byproducts</span><span class="toggle">+</span></div>
         <div class="accordion-content"><div class="accordion-body">
-          <p><strong>Key technologies:</strong> GPS/autosteering (70% adoption on large farms), yield monitors, variable-rate application, drone and satellite imagery, soil sensors, automated irrigation controls, robotic milking systems, and anaerobic digesters.</p>
+          <p><strong>Key technologies:</strong> GPS/autosteering (70% adoption on large farms)<sup class="cite"><a href="#ref-5">5</a></sup>, yield monitors, variable-rate application, drone and satellite imagery, soil sensors, automated irrigation controls, robotic milking systems, and anaerobic digesters.</p>
           <div class="pull-quote">"Natural gas accounts for up to 80% of nitrogen fertilizer manufacturing cost, directly coupling fertilizer prices to natural gas markets."</div>
-          <p><strong>Energy inputs:</strong> U.S. agriculture consumes approximately 1,872 TBtu annually. Diesel dominates field operations; electricity and natural gas drive irrigation pumping; propane/natural gas is used for grain drying and livestock facility heating. Fertilizer production (upstream) is one of the most energy-intensive chemical manufacturing processes.</p>
-          <p><strong>Byproducts and waste streams:</strong> Crop residues (corn stover, wheat straw), animal manure, food processing waste, and post-harvest losses. Anaerobic digestion can convert manure into biogas (400 operating farm digesters; 8,000+ additional farms are technically suitable). Crop residues have potential as biofuel feedstocks but compete with soil health benefits of residue retention.</p>
+          <p><strong>Energy inputs:</strong> U.S. agriculture consumes approximately 1,872 TBtu annually. Diesel dominates field operations; electricity and natural gas drive irrigation pumping<sup class="cite"><a href="#ref-6">6</a></sup>; propane/natural gas is used for grain drying and livestock facility heating. Fertilizer production (upstream) is one of the most energy-intensive chemical manufacturing processes.</p>
+          <p><strong>Byproducts and waste streams:</strong> Crop residues (corn stover, wheat straw), animal manure, food processing waste, and post-harvest losses. Anaerobic digestion can convert manure into biogas (400 operating farm digesters; 8,000+ additional farms are technically suitable)<sup class="cite"><a href="#ref-7">7</a></sup>. Crop residues have potential as biofuel feedstocks but compete with soil health benefits of residue retention<sup class="cite"><a href="#ref-18">18</a></sup>.</p>
         </div></div>
       </div>
 
@@ -633,12 +630,12 @@
         <div class="accordion-content"><div class="accordion-body">
           <p>The agricultural sector faces several interconnected energy and technology challenges that represent high-priority targets for DOE R&amp;D:</p>
           <ul>
-            <li><strong>Irrigation pumping efficiency:</strong> 53.1 million irrigated acres at $3.3B annual energy cost. Variable-frequency drive (VFD) adoption on pumps remains below 20%.</li>
+            <li><strong>Irrigation pumping efficiency:</strong> 53.1 million irrigated acres at $3.3B annual energy cost<sup class="cite"><a href="#ref-6">6</a></sup>. Variable-frequency drive (VFD) adoption on pumps remains below 20%.</li>
             <li><strong>Grain drying energy intensity:</strong> Drying consumes 1,500&ndash;4,500 BTU per pound of water removed. Combination drying (high-temp + in-bin finishing) can reduce energy use by ~50%.</li>
             <li><strong>On-farm electrification barriers:</strong> Battery-powered tractors (Monarch, Solectrac, Deere pilots) offer 4&ndash;8 hour battery life vs. all-day diesel operations. Charging infrastructure in rural areas is minimal.</li>
             <li><strong>CEA energy optimization:</strong> Indoor vertical farms consume 30&ndash;80 kWh/kg of produce. The viability threshold is &lt;5 kWh/kg for leafy greens. Integrated LED + HVAC optimization is the primary R&amp;D pathway.</li>
-            <li><strong>Methane mitigation:</strong> Enteric methane from livestock (215.6 MMT CO&#8322;e) has no scalable engineering solution. Feed additives (3-NOP/Bovaer, FDA approved 2024) show 20&ndash;30% reduction in trials but face adoption barriers.</li>
-            <li><strong>Soil N&#8322;O emissions:</strong> The largest single agricultural GHG source (324.9 MMT CO&#8322;e). Enhanced efficiency fertilizers and precision application can reduce emissions 10&ndash;30% but are not widely adopted.</li>
+            <li><strong>Methane mitigation:</strong> Enteric methane from livestock (215.6 MMT CO&#8322;e)<sup class="cite"><a href="#ref-16">16</a></sup> has no scalable engineering solution. Feed additives (3-NOP/Bovaer, FDA approved 2024) show 20&ndash;30% reduction in trials but face adoption barriers.</li>
+            <li><strong>Soil N&#8322;O emissions:</strong> The largest single agricultural GHG source (324.9 MMT CO&#8322;e)<sup class="cite"><a href="#ref-4">4</a></sup>. Enhanced efficiency fertilizers and precision application can reduce emissions 10&ndash;30% but are not widely adopted.</li>
           </ul>
         </div></div>
       </div>
@@ -648,7 +645,7 @@
         <div class="accordion-content"><div class="accordion-body">
           <p>U.S. agriculture is globally competitive but faces growing structural headwinds. Total factor productivity growth has averaged 1.4% annually since 1948, but the rate has slowed in recent decades. Key competitiveness metrics:</p>
           <ul>
-            <li><strong>Net farm income:</strong> $151.6B nationally (2024), but highly concentrated. Median net farm income from farming alone is &minus;$1,189 (2025 forecast), meaning most farm households depend on off-farm income.</li>
+            <li><strong>Net farm income:</strong> $151.6B nationally (2024)<sup class="cite"><a href="#ref-1">1</a></sup>, but highly concentrated. Median net farm income from farming alone is &minus;$1,189 (2025 forecast), meaning most farm households depend on off-farm income.</li>
             <li><strong>Productivity:</strong> U.S. corn yields (179.3 bu/acre) and milk production per cow (24,178 lbs/yr) are world-leading, driven by genetics, inputs, and management practices.</li>
             <li><strong>Trade position:</strong> The U.S. is the world's largest agricultural exporter ($170+ billion), but faces increasing competition from Brazil, Argentina, and the EU in key commodities.</li>
             <li><strong>Input cost ratio:</strong> Production expenses ($467B) consume roughly 86% of gross farm revenue, leaving thin margins that make farms vulnerable to price volatility.</li>
@@ -663,10 +660,40 @@
           <ul>
             <li><strong>Precision ag mainstreaming:</strong> GPS/autosteering and yield monitoring are approaching saturation on large farms. The next frontier is variable-rate technology, autonomous equipment, and AI-driven decision tools.</li>
             <li><strong>Farm electrification:</strong> Electric tractor pilots are underway (Monarch, Solectrac, Deere), but battery energy density and rural charging infrastructure remain bottlenecks. Electrification of stationary equipment (irrigation, grain handling) is more immediately viable.</li>
-            <li><strong>Renewable energy on farms:</strong> USDA REAP has funded 8,012 on-farm renewable projects. The IRA allocated $2B+ for agricultural clean energy. Farm-sited solar and wind are growing revenue streams.</li>
+            <li><strong>Renewable energy on farms:</strong> USDA REAP has funded 8,012 on-farm renewable projects<sup class="cite"><a href="#ref-8">8</a></sup>. The IRA allocated $2B+ for agricultural clean energy. Farm-sited solar and wind are growing revenue streams.</li>
             <li><strong>CEA consolidation:</strong> The indoor vertical farming segment is undergoing severe shakeout. Greenhouses with hybrid (natural + supplemental lighting) models are viable; pure indoor vertical farms face existential energy cost challenges.</li>
             <li><strong>Climate-smart agriculture:</strong> USDA's Agriculture Management Practice (AMP) program, successor to the $3.1B Climate-Smart Commodities initiative, is reshaping practice incentive structures and MRV requirements.</li>
+            <li><strong>Alternative proteins:</strong> FDA issued its first pre-market consultation for cultivated (cell-cultured) meat in 2022&ndash;2023<sup class="cite"><a href="#ref-19">19</a></sup>, opening a new regulatory pathway that could reshape long-term demand for conventional animal protein.</li>
           </ul>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-header"><span>12. References</span><span class="toggle">+</span></div>
+        <div class="accordion-content"><div class="accordion-body">
+          <p>The following authoritative sources underpin the data and claims in this subsector profile. In-text superscript markers link to the corresponding numbered entry below.</p>
+          <ol class="references-list" style="padding-left: 1.5rem;">
+            <li id="ref-1"><a href="https://www.ers.usda.gov/data-products/farm-income-and-wealth-statistics/" target="_blank" rel="noopener">USDA ERS, Farm Income and Wealth Statistics (2025).</a></li>
+            <li id="ref-2"><a href="https://www.nass.usda.gov/Publications/AgCensus/2022/" target="_blank" rel="noopener">USDA NASS, 2022 Census of Agriculture.</a></li>
+            <li id="ref-3"><a href="https://www.nass.usda.gov/Publications/Todays_Reports/reports/fnlo0225.pdf" target="_blank" rel="noopener">USDA NASS, Farms and Land in Farms 2024 Summary (February 2025).</a></li>
+            <li id="ref-4"><a href="https://www.epa.gov/ghgemissions/inventory-us-greenhouse-gas-emissions-and-sinks" target="_blank" rel="noopener">U.S. EPA, Inventory of U.S. Greenhouse Gas Emissions and Sinks: 1990&ndash;2022.</a></li>
+            <li id="ref-5"><a href="https://www.ers.usda.gov/publications/pub-details/?pubid=105893" target="_blank" rel="noopener">USDA ERS, EIB-248: Precision Agriculture in the Digital Era &mdash; Recent Adoption on U.S. Farms.</a></li>
+            <li id="ref-6"><a href="https://www.nass.usda.gov/Publications/AgCensus/2017/Online_Resources/Farm_and_Ranch_Irrigation_Survey/" target="_blank" rel="noopener">USDA NASS, 2018 Farm and Ranch Irrigation Survey.</a></li>
+            <li id="ref-7"><a href="https://www.epa.gov/agstar/agstar-data-and-trends" target="_blank" rel="noopener">U.S. EPA AgSTAR, Livestock Anaerobic Digester Database.</a></li>
+            <li id="ref-8">USDA Rural Development, Rural Energy for America Program (REAP). <span class="broken-link">URL needs verification</span></li>
+            <li id="ref-9"><a href="https://www.ers.usda.gov/topics/farm-economy/farm-structure-and-organization/" target="_blank" rel="noopener">USDA ERS, Farm Structure and Organization.</a></li>
+            <li id="ref-10"><a href="https://ne.water.usgs.gov/projects/HPA/" target="_blank" rel="noopener">USGS, High Plains (Ogallala) Aquifer Groundwater Monitoring Program.</a></li>
+            <li id="ref-11"><a href="https://doi.org/10.1787/4c5d2cfb-en" target="_blank" rel="noopener">OECD-FAO Agricultural Outlook 2024&ndash;2033 (2024).</a></li>
+            <li id="ref-12">USDA ERS, America's Farms and Ranches at a Glance: 2024 Edition. <span class="broken-link">URL needs verification</span></li>
+            <li id="ref-13"><a href="https://data.ers.usda.gov/reports.aspx?ID=17845" target="_blank" rel="noopener">USDA ERS, Cash Receipts by Commodity (State and U.S.).</a></li>
+            <li id="ref-14"><a href="https://www.nass.usda.gov/Publications/Todays_Reports/reports/crop0125.pdf" target="_blank" rel="noopener">USDA NASS, Crop Production 2024 Summary (January 2025).</a></li>
+            <li id="ref-15"><a href="https://www.ers.usda.gov/topics/farm-economy/farm-labor/" target="_blank" rel="noopener">USDA ERS, Farm Labor.</a></li>
+            <li id="ref-16"><a href="https://www.epa.gov/gmi/importance-methane" target="_blank" rel="noopener">U.S. EPA, Importance of Methane &mdash; Agricultural Methane Emissions.</a></li>
+            <li id="ref-17"><a href="https://usda.library.cornell.edu/concern/publications/h702q636h" target="_blank" rel="noopener">USDA NASS, Cattle Inventory Reports.</a></li>
+            <li id="ref-18">U.S. Department of Energy, 2023 Billion-Ton Report: An Assessment of U.S. Renewable Carbon Resources. <span class="broken-link">URL needs verification</span></li>
+            <li id="ref-19"><a href="https://www.fda.gov/food/cfsan-constituent-updates/fda-completes-first-pre-market-consultation-human-food-made-using-animal-cell-culture-technology" target="_blank" rel="noopener">U.S. FDA, First Pre-Market Consultation for Human Food Made Using Animal Cell Culture Technology (UPSIDE Foods / GOOD Meat).</a></li>
+            <li id="ref-20"><a href="https://www.nass.usda.gov/Publications/AgCensus/2022/Online_Resources/Aquaculture/" target="_blank" rel="noopener">USDA NASS, 2022 Census of Aquaculture (published 2024).</a></li>
+          </ol>
         </div></div>
       </div>
     </div>
@@ -767,16 +794,53 @@ window.addEventListener('scroll', function() {
   navbar.classList.toggle('scrolled', window.scrollY > 20);
 });
 
-// ── SMOOTH SCROLL ──
+// ── SMOOTH SCROLL (with accordion expand) ──
+function scrollToTargetWithAccordion(target) {
+  // If target is inside a collapsed accordion, expand it first
+  var accordionContent = target.closest('.accordion-content');
+  if (accordionContent) {
+    var header = accordionContent.previousElementSibling;
+    if (header && !header.classList.contains('active')) {
+      // Close all others
+      document.querySelectorAll('.accordion-content').forEach(function(c) { c.style.maxHeight = null; });
+      document.querySelectorAll('.accordion-header').forEach(function(h) { h.classList.remove('active'); });
+      // Open target's accordion
+      header.classList.add('active');
+      accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
+      // Wait for transition before scrolling
+      setTimeout(function() {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Highlight briefly if it's a reference
+        if (target.id && target.id.indexOf('ref-') === 0) {
+          var origBg = target.style.background;
+          target.style.background = 'var(--gold-light)';
+          target.style.transition = 'background 0.5s ease';
+          setTimeout(function() { target.style.background = origBg; }, 2500);
+        }
+      }, 450);
+      return;
+    }
+  }
+  // Default scroll
+  target.scrollIntoView({ behavior: 'smooth', block: target.id && target.id.indexOf('ref-') === 0 ? 'center' : 'start' });
+  if (target.id && target.id.indexOf('ref-') === 0) {
+    var origBg = target.style.background;
+    target.style.background = 'var(--gold-light)';
+    target.style.transition = 'background 0.5s ease';
+    setTimeout(function() { target.style.background = origBg; }, 2500);
+  }
+}
+
 document.querySelectorAll('a[href^="#"]').forEach(function(a) {
   a.addEventListener('click', function(e) {
+    var href = a.getAttribute('href');
+    if (href === '#' || href.length < 2) return;
+    var target = document.querySelector(href);
+    if (!target) return;
     e.preventDefault();
-    var target = document.querySelector(a.getAttribute('href'));
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      var navLinks = document.querySelector('.nav-links');
-      if (navLinks) navLinks.classList.remove('open');
-    }
+    scrollToTargetWithAccordion(target);
+    var navLinks = document.querySelector('.nav-links');
+    if (navLinks) navLinks.classList.remove('open');
   });
 });
 
@@ -785,45 +849,6 @@ var fadeObserver = new IntersectionObserver(function(entries) {
   entries.forEach(function(entry) { if (entry.isIntersecting) entry.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 document.querySelectorAll('.fade-up').forEach(function(el) { fadeObserver.observe(el); });
-
-// ── KPI COUNTER ANIMATION ──
-function countUp(el, target, prefix, suffix, duration, useComma) {
-  var start = performance.now();
-  var isDecimal = target % 1 !== 0;
-  function update(now) {
-    var elapsed = now - start;
-    var progress = Math.min(elapsed / duration, 1);
-    var eased = 1 - Math.pow(1 - progress, 3);
-    var current = target * eased;
-    var display;
-    if (isDecimal) {
-      display = current.toFixed(1);
-    } else {
-      display = Math.round(current).toString();
-    }
-    if (useComma) {
-      display = Number(display).toLocaleString('en-US');
-    }
-    el.textContent = (prefix || '') + display + (suffix || '');
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
-}
-
-var kpiObserver = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting && !entry.target.dataset.animated) {
-      entry.target.dataset.animated = 'true';
-      var el = entry.target;
-      var target = parseFloat(el.dataset.target);
-      var prefix = el.dataset.prefix || '';
-      var suffix = el.dataset.suffix || '';
-      var useComma = el.dataset.comma === 'true';
-      countUp(el, target, prefix, suffix, 1800, useComma);
-    }
-  });
-}, { threshold: 0.3 });
-document.querySelectorAll('.kpi-value').forEach(function(el) { kpiObserver.observe(el); });
 
 // ── ACCORDION ──
 document.querySelectorAll('.accordion-header').forEach(function(header) {
