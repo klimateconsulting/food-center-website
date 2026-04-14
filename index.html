@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FOOD Center — Food &amp; Beverage Operational Optimization and Deployment Center</title>
-  <link rel="icon" type="image/png" href="logo/logo_final.png">
+  <link rel="icon" type="image/png" href="logo/logo_final_2.png">
 
   <!-- Google Analytics 4 -->
   <!-- ⚠️ REPLACE G-S0LG1P9MHJ with your GA4 Measurement ID -->
@@ -347,6 +347,9 @@
       font-size: 1.3rem;
       color: var(--green-dark);
       margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     .flow-wrapper .flow-subtitle {
       font-size: 0.88rem;
@@ -354,6 +357,93 @@
       margin-bottom: 1.5rem;
     }
     .flow-wrapper svg text { font-family: 'Inter', sans-serif; }
+
+    /* Info icon with hover tooltip */
+    .info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--green-pale);
+      color: var(--green-dark);
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-style: italic;
+      cursor: help;
+      position: relative;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .info-icon:hover { background: var(--green-mid); color: white; }
+    .info-icon::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green-dark);
+      color: white;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 400;
+      font-style: normal;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.55;
+      width: 340px;
+      max-width: 80vw;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 100;
+      text-align: left;
+      white-space: pre-wrap;
+    }
+    .info-icon::before {
+      content: '';
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-bottom-color: var(--green-dark);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 100;
+    }
+    .info-icon:hover::after, .info-icon:hover::before { opacity: 1; }
+
+    /* Sankey interactive hover */
+    #sankey-chart { position: relative; }
+    #sankey-chart path { transition: stroke-opacity 0.2s; cursor: pointer; }
+    #sankey-chart path:hover { stroke-opacity: 0.75 !important; }
+    #sankey-chart rect { cursor: pointer; transition: filter 0.2s; }
+    #sankey-chart rect:hover { filter: brightness(1.18); }
+    .sankey-tooltip {
+      position: absolute;
+      background: var(--green-dark);
+      color: white;
+      padding: 0.55rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+      white-space: nowrap;
+      z-index: 20;
+      transform: translate(-50%, -100%);
+      margin-top: -8px;
+    }
+    .sankey-tooltip.visible { opacity: 1; }
+    .sankey-tooltip .tt-label { font-weight: 600; }
+    .sankey-tooltip .tt-value { color: #b8e0c8; margin-left: 0.3rem; }
     .flow-legend {
       display: flex; gap: 2rem; justify-content: center;
       margin-top: 1rem; font-size: 0.78rem; color: var(--slate);
@@ -790,7 +880,7 @@
 <!-- ── PASSWORD GATE ── -->
 <div class="password-gate" id="password-gate">
   <div class="password-box">
-    <img src="logo/logo_final.png" alt="FOOD Center Logo">
+    <img src="logo/logo_final_2.png" alt="FOOD Center Logo">
     <h2>FOOD Center</h2>
     <p>This site is currently in preview. Please enter the access code to continue.</p>
     <form onsubmit="checkPassword(event)">
@@ -807,7 +897,7 @@
 <nav id="navbar">
   <div class="nav-inner">
     <a href="#" class="nav-logo">
-      <img src="logo/logo_final.png" alt="FOOD Center Logo">
+      <img src="logo/logo_final_2.png" alt="FOOD Center Logo">
       <span>FOOD Center</span>
     </a>
     <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">
@@ -889,16 +979,17 @@
     </div>
 
     <div class="infographic-wrapper fade-up">
-      <img src="images/infographic.png" alt="FOOD Center value chain infographic showing Agriculture, Food Processing, Transportation & Storage, Retail & Distribution, Byproducts & Waste Streams, and Crosscutting Technologies">
+      <img src="images/infographic_final.png" alt="FOOD Center value chain infographic showing Agriculture, Food Processing, Transportation & Storage, Retail & Distribution, Byproducts & Waste Streams, and Crosscutting Technologies">
     </div>
 
     <div class="flow-wrapper fade-up">
-      <h3>Food Value Chain Flow</h3>
+      <h3>Food Value Chain Flow <span class="info-icon" data-tooltip="Visualizes the flow of food through the U.S. value chain — from farm production through processing, retail, and food service to the consumer. Waste streams at each stage are shown flowing to a cumulative waste column, illustrating where food is lost along the supply chain. Approximately 35% of the U.S. food supply (~89M tons) is lost or wasted across all stages annually. Based on ReFED 2022 estimates.&#10;&#10;Source: ReFED">i</span></h3>
       <p class="flow-subtitle">From farm gate to consumer &mdash; with waste at each stage (ReFED 2022)</p>
       <div id="sankey-chart"></div>
       <div class="flow-legend">
         <span><span class="swatch" style="background:var(--green-mid);"></span> Supply chain flow</span>
         <span><span class="swatch" style="background:#c53030;"></span> Waste flow</span>
+        <span style="color:var(--green-mid); font-style:italic;">Hover for details</span>
       </div>
       <p class="flow-source">Source: ReFED 2022 | Relative units</p>
     </div>
@@ -1108,7 +1199,7 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-logo">
-      <img src="logo/logo_final.png" alt="FOOD Center">
+      <img src="logo/logo_final_2.png" alt="FOOD Center">
       <span>FOOD Center</span>
     </div>
     <div class="footer-text">
@@ -1201,6 +1292,23 @@
     var margin = { top: 10, right: 20, bottom: 10, left: 20 };
     var width = 900, height = 360;
 
+    // Floating tooltip
+    var tooltip = d3.select(container).append('div')
+      .attr('class', 'sankey-tooltip');
+    function showTip(html, evt) {
+      var rect = container.getBoundingClientRect();
+      tooltip.html(html)
+        .style('left', (evt.clientX - rect.left) + 'px')
+        .style('top', (evt.clientY - rect.top) + 'px')
+        .classed('visible', true);
+    }
+    function moveTip(evt) {
+      var rect = container.getBoundingClientRect();
+      tooltip.style('left', (evt.clientX - rect.left) + 'px')
+        .style('top', (evt.clientY - rect.top) + 'px');
+    }
+    function hideTip() { tooltip.classed('visible', false); }
+
     var svg = d3.select(container).append('svg')
       .attr('viewBox', '0 0 ' + (width + margin.left + margin.right) + ' ' + (height + margin.top + margin.bottom))
       .attr('preserveAspectRatio', 'xMidYMid meet')
@@ -1226,7 +1334,15 @@
       .attr('fill', 'none')
       .attr('stroke', function(d) { return wasteNodes.has(d.target.index) ? '#c53030' : '#52b788'; })
       .attr('stroke-opacity', function(d) { return wasteNodes.has(d.target.index) ? 0.35 : 0.4; })
-      .attr('stroke-width', function(d) { return Math.max(1, d.width); });
+      .attr('stroke-width', function(d) { return Math.max(1, d.width); })
+      .on('mouseover', function(evt, d) {
+        var isWaste = wasteNodes.has(d.target.index);
+        var label = d.source.name + ' → ' + d.target.name;
+        var prefix = isWaste ? 'Waste flow' : 'Flow';
+        showTip('<span class="tt-label">' + label + '</span><br>' + prefix + ':<span class="tt-value">' + d.value + ' units</span>', evt);
+      })
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip);
 
     // Nodes
     svg.append('g').selectAll('rect')
@@ -1236,7 +1352,17 @@
       .attr('height', function(d) { return Math.max(1, d.y1 - d.y0); })
       .attr('width', function(d) { return d.x1 - d.x0; })
       .attr('fill', function(d) { return wasteNodes.has(d.index) ? '#c53030' : '#2d6a4f'; })
-      .attr('rx', 3);
+      .attr('rx', 3)
+      .on('mouseover', function(evt, d) {
+        var total = Math.max(d.value || 0,
+          d3.sum(d.sourceLinks, function(l) { return l.value; }),
+          d3.sum(d.targetLinks, function(l) { return l.value; }));
+        var isWaste = wasteNodes.has(d.index);
+        var descr = isWaste ? 'Waste total' : 'Throughput';
+        showTip('<span class="tt-label">' + d.name + '</span><br>' + descr + ':<span class="tt-value">' + total + ' units</span>', evt);
+      })
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip);
 
     // Labels
     svg.append('g').selectAll('text')
